@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/components/Markdown.tsx"
+        ],
+        "createdAt": "2026-10-16T20:40:54.841Z",
+        "reason": "Claude: the <img> src is a data:image/svg+xml URI built at render time from the lesson's svg block, not a placeholder"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/index.css"
+        ],
+        "createdAt": "2026-10-21T00:42:16.940Z",
+        "reason": "Claude's judgment: line 71 is the pre-existing .input (placeholder slate-500 on bg-white); the brand colour is only the focus ring, not the background"
+      }
+    ]
+  }
+}

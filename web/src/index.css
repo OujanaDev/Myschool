@@ -1,0 +1,420 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0f766e;
+  --color-brand-700: #0f5f59;
+  --color-brand-800: #134e4a;
+  --color-brand-900: #0b3a37;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-surface: #f8fafc;
+  --radius-xl2: 1.25rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+/* Browser surfaces carry the palette too */
+::selection {
+  background-color: var(--color-brand-100);
+  color: var(--color-brand-900);
+}
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}
+input,
+textarea {
+  caret-color: var(--color-brand-600);
+}
+body {
+  @apply bg-surface text-ink font-sans antialiased;
+}
+
+/* Cards & buttons */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+}
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_2px_rgba(15,23,42,0.04)];
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-accent {
+    @apply btn bg-accent-500 text-ink hover:bg-accent-400;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-slate-700 hover:bg-slate-100;
+  }
+  .btn-outline {
+    @apply btn border border-slate-300 bg-white text-slate-800 hover:bg-slate-50;
+  }
+  .btn-danger {
+    @apply btn bg-red-50 text-red-700 hover:bg-red-100;
+  }
+  .input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 placeholder:text-slate-500;
+  }
+  .label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+}
+
+/* Markdown content */
+.prose-lesson {
+  @apply text-[15.5px] leading-7 text-slate-800;
+}
+.prose-lesson h1 {
+  @apply text-3xl font-extrabold tracking-tight text-ink mt-2 mb-6;
+}
+.prose-lesson h2 {
+  @apply text-xl font-bold text-ink mt-10 mb-3 pb-2 border-b border-slate-200;
+}
+.prose-lesson h3 {
+  @apply text-lg font-semibold text-ink mt-6 mb-2;
+}
+.prose-lesson p {
+  @apply my-3;
+}
+.prose-lesson ul {
+  @apply list-disc pl-6 my-3 space-y-1;
+}
+.prose-lesson ol {
+  @apply list-decimal pl-6 my-3 space-y-1;
+}
+.prose-lesson strong {
+  @apply font-bold text-ink;
+}
+.prose-lesson blockquote {
+  @apply border border-brand-200 bg-brand-50 rounded-xl px-4 py-3 my-5 text-slate-700;
+}
+.prose-lesson blockquote > p:first-child > strong:first-child {
+  @apply text-ink;
+}
+/* Callout boxes: the label on the first line of a blockquote decides the colour (see scraper/style/format-cours.md) */
+/* À retenir: the key points of a part, strongest box of the lesson */
+.prose-lesson blockquote.callout-key {
+  @apply border-2 border-amber-400 bg-yellow-50 text-amber-950;
+}
+/* Testez-vous: quick question, its Réponse is folded right below */
+.prose-lesson blockquote.callout-quiz {
+  @apply border-teal-300 bg-teal-50 text-teal-950;
+}
+/* Pas à pas: numbered steps revealed one by one */
+.prose-lesson blockquote.callout-steps {
+  @apply border-indigo-200 bg-indigo-50 text-indigo-950;
+}
+.prose-lesson blockquote.callout-steps ol > li {
+  animation: step-in 0.25s ease-out;
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose-lesson blockquote.callout-steps ol > li {
+    animation: none;
+  }
+}
+.prose-lesson .steps-actions {
+  @apply mt-2 flex flex-wrap gap-2;
+}
+.prose-lesson .steps-next {
+  @apply rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700;
+}
+.prose-lesson .steps-other {
+  @apply rounded-lg px-3 py-1.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-100;
+}
+/* Réponse and Indice: same disclosure as solutions, with their own tint */
+.prose-lesson details.solution.answer > summary {
+  @apply text-teal-700 hover:bg-teal-50;
+}
+.prose-lesson details.solution.hint > summary {
+  @apply text-amber-700 hover:bg-amber-50;
+}
+.prose-lesson blockquote.callout-definition {
+  @apply border-amber-300 bg-amber-50 text-amber-950;
+}
+.prose-lesson blockquote.callout-theorem {
+  @apply border-sky-200 bg-sky-50 text-sky-950;
+}
+.prose-lesson blockquote.callout-method {
+  @apply border-violet-200 bg-violet-50 text-violet-950;
+}
+.prose-lesson blockquote.callout-example {
+  @apply border-emerald-200 bg-emerald-50 text-emerald-950;
+}
+.prose-lesson blockquote.callout-warning {
+  @apply border-orange-200 bg-orange-50 text-orange-950;
+}
+.prose-lesson blockquote.callout-proof {
+  @apply border-slate-200 bg-slate-50 text-slate-700;
+}
+.prose-lesson blockquote.callout-exercise {
+  @apply border-slate-300 bg-slate-100 text-slate-800;
+}
+.prose-lesson h2,
+.prose-lesson h3 {
+  scroll-margin-top: 6rem;
+}
+/* Solutions are closed by default: the answer is a click away, not a wall of text */
+.prose-lesson details.solution {
+  @apply my-4 rounded-xl border border-slate-200 bg-white;
+}
+.prose-lesson details.solution > summary {
+  @apply flex cursor-pointer list-none items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50;
+}
+.prose-lesson details.solution > summary::-webkit-details-marker {
+  display: none;
+}
+.prose-lesson details.solution > summary::before {
+  content: "▸";
+  @apply inline-block text-xs transition-transform;
+}
+.prose-lesson details.solution[open] > summary::before {
+  transform: rotate(90deg);
+}
+.prose-lesson details.solution[open] > summary {
+  @apply border-b border-slate-200 rounded-b-none;
+}
+.prose-lesson details.solution .solution-body {
+  @apply px-4 py-2;
+}
+/* Explanatory diagrams (svg fenced blocks) */
+.prose-lesson figure.schema {
+  @apply my-6 flex justify-center rounded-xl border border-slate-200 bg-white p-4;
+}
+.prose-lesson figure.schema img {
+  @apply h-auto w-full max-w-xl;
+}
+/* Interactive labs (```lab fenced blocks): graph-paper stage, quiet controls, live formulas */
+.prose-lesson .lab {
+  @apply my-8 overflow-hidden rounded-2xl border border-slate-300 bg-white;
+}
+.prose-lesson .lab-head {
+  @apply flex flex-wrap items-center gap-2.5 border-b border-slate-200 bg-slate-50 px-4 py-3;
+}
+.prose-lesson .lab-chip {
+  @apply inline-flex items-center gap-1 rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-semibold text-white;
+}
+.prose-lesson .lab-title {
+  @apply text-[15px] font-bold leading-snug text-ink;
+}
+.prose-lesson .lab-consigne {
+  @apply mx-0 mb-0 mt-0 px-4 pt-3 text-sm leading-6 text-slate-600;
+}
+.prose-lesson .lab-body {
+  @apply px-4 pb-4 pt-3;
+}
+.prose-lesson .lab-stage,
+.prose-lesson .lab-scope {
+  @apply block h-auto w-full rounded-xl border border-slate-200;
+}
+.prose-lesson .lab-scope {
+  @apply mt-2;
+}
+.prose-lesson .lab-lens {
+  cursor: grab;
+  touch-action: none;
+}
+.prose-lesson .lab-lens.is-dragging {
+  cursor: grabbing;
+}
+.prose-lesson .lab-toolbar {
+  @apply mt-3 flex flex-wrap items-center gap-2;
+}
+.prose-lesson .lab-btn {
+  @apply inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50;
+}
+.prose-lesson .lab-segmented {
+  @apply inline-flex rounded-lg border border-slate-300 bg-white p-0.5 sm:ml-auto;
+}
+.prose-lesson .lab-segmented button {
+  @apply rounded-md px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-ink;
+}
+.prose-lesson .lab-segmented button[aria-pressed="true"] {
+  @apply bg-brand-600 text-white hover:text-white;
+}
+.prose-lesson .lab-controls {
+  @apply mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2;
+}
+.prose-lesson .lab-slider {
+  @apply flex flex-col gap-1.5 text-sm text-slate-700;
+}
+.prose-lesson .lab-slider-label {
+  @apply flex items-baseline justify-between gap-3 font-medium;
+}
+.prose-lesson .lab-value {
+  @apply font-semibold tabular-nums text-ink;
+}
+.prose-lesson .lab input[type="range"],
+.prose-lesson .lab input[type="checkbox"] {
+  accent-color: var(--color-brand-600);
+}
+.prose-lesson .lab input[type="range"] {
+  @apply w-full cursor-pointer;
+}
+.prose-lesson .lab-strobe {
+  @apply flex flex-col gap-3;
+}
+.prose-lesson .lab-check {
+  @apply inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700;
+}
+.prose-lesson .lab-readouts {
+  @apply mb-0 mt-4 grid gap-x-6 gap-y-2.5 rounded-xl bg-brand-50 px-4 py-3 text-sm sm:grid-cols-2;
+}
+.prose-lesson .lab-readouts dt {
+  @apply text-xs font-medium text-brand-700;
+}
+.prose-lesson .lab-readouts dd {
+  @apply m-0 tabular-nums text-brand-900;
+}
+.prose-lesson .lab-challenge {
+  @apply mb-0 mt-3 flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-950;
+}
+.prose-lesson .lab-challenge svg {
+  @apply mt-1;
+}
+.prose-lesson .lab-challenge.is-solved {
+  @apply border-emerald-300 bg-emerald-50 text-emerald-900;
+}
+.prose-lesson .lab-error {
+  @apply px-4 pb-4 text-sm text-muted;
+}
+.prose-lesson .lab-legend {
+  @apply my-2 flex list-none flex-wrap gap-x-5 gap-y-1 p-0 text-sm text-slate-700;
+}
+.prose-lesson .lab-legend li {
+  @apply m-0 flex items-center gap-2;
+}
+.prose-lesson .lab-legend span {
+  @apply inline-block h-1 w-5 rounded-full;
+}
+/* echiquier: parents, cross grid, offspring shares */
+.prose-lesson .lab-parents {
+  @apply flex flex-wrap items-end gap-3;
+}
+.prose-lesson .lab-parents fieldset {
+  @apply m-0 flex min-w-0 flex-1 flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 pb-3 pt-1;
+}
+.prose-lesson .lab-parents legend {
+  @apply px-1 text-sm font-semibold text-ink;
+}
+.prose-lesson .lab-cross {
+  @apply self-center text-2xl font-bold text-slate-400;
+}
+.prose-lesson .lab-select {
+  @apply flex flex-col gap-1 text-xs font-medium text-slate-600;
+}
+.prose-lesson .lab-select select {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm text-ink;
+}
+.prose-lesson .lab-grid-wrap {
+  @apply mt-4 overflow-x-auto;
+}
+.prose-lesson table.lab-grid {
+  @apply my-0 w-full border-separate text-center text-sm;
+  border-spacing: 4px;
+}
+.prose-lesson .lab-grid caption {
+  @apply mb-1 text-left text-xs text-slate-500;
+  caption-side: top;
+}
+.prose-lesson .lab-grid th {
+  @apply rounded-lg border-0 bg-slate-100 px-2 py-1.5 text-center font-semibold text-ink;
+}
+.prose-lesson .lab-grid th small {
+  @apply block text-[11px] font-medium text-slate-600;
+}
+.prose-lesson .lab-grid .lab-grid-corner {
+  @apply bg-transparent text-xs text-slate-500;
+}
+.prose-lesson .lab-grid td {
+  @apply rounded-lg border-0 px-2 py-2 align-middle;
+}
+.prose-lesson .lab-genotype {
+  @apply block font-semibold;
+}
+.prose-lesson .lab-phenotype {
+  @apply block text-xs;
+}
+.prose-lesson .lab-shares {
+  @apply mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-900;
+}
+.prose-lesson .lab-share-bar {
+  @apply flex h-3 overflow-hidden rounded-full;
+}
+.prose-lesson .lab-shares ul {
+  @apply mb-0 mt-2.5 flex list-none flex-wrap gap-x-6 gap-y-1 p-0;
+}
+.prose-lesson .lab-shares li {
+  @apply m-0 flex items-center gap-2;
+}
+.prose-lesson .lab-swatch {
+  @apply inline-block h-3 w-3 rounded-sm;
+}
+
+/* ==texte== : surlignage jaune */
+.prose-lesson mark {
+  @apply rounded bg-yellow-200 px-1 text-ink;
+}
+.prose-lesson table {
+  @apply w-full my-4 text-sm border-collapse;
+}
+.prose-lesson th {
+  @apply bg-slate-100 text-left font-semibold px-3 py-2 border border-slate-200;
+}
+.prose-lesson td {
+  @apply px-3 py-2 border border-slate-200;
+}
+.prose-lesson hr {
+  @apply my-8 border-slate-200;
+}
+.prose-lesson code {
+  @apply rounded bg-slate-100 px-1.5 py-0.5 text-[13px];
+}
+.prose-lesson pre {
+  @apply rounded-xl bg-slate-900 text-slate-100 p-4 overflow-x-auto my-4;
+}
+.prose-lesson pre code {
+  @apply bg-transparent p-0 text-slate-100;
+}
+.prose-lesson .katex-display {
+  @apply my-4 overflow-x-auto;
+}
+.prose-lesson em {
+  @apply italic;
+}
+
+/* Animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fade-up 0.35s ease-out both;
+}

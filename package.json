@@ -1,0 +1,20 @@
+{
+  "name": "myschool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Myschool — plateforme éducative marocaine (web, Android, iOS)",
+  "scripts": {
+    "setup": "npm --prefix server install && npm --prefix web install && npm --prefix server run generate && npm --prefix server run db:push && npm --prefix server run db:seed",
+    "setup:mobile": "npm --prefix mobile install",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
+    "dev:api": "npm --prefix server run dev",
+    "dev:web": "npm --prefix web run dev",
+    "dev:mobile": "npm --prefix mobile run start",
+    "build": "npm --prefix web run build",
+    "start": "npm --prefix server run start",
+    "db:reset": "npm --prefix server run db:reset"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

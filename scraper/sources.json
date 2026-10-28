@@ -1,0 +1,21 @@
+{
+  "_comment": "Liste des pages à récupérer avec `npm run scrape`. Chaque entrée : url (obligatoire), level / subject (slugs Myschool), chapter (titre), type (COURSE | SUMMARY | EXERCISE | EXAM | VIDEO), tags.",
+  "defaults": { "level": "non-classe", "subject": "non-classe", "type": "COURSE" },
+  "sources": [
+    {
+      "url": "https://fr.wikipedia.org/wiki/Th%C3%A9or%C3%A8me_de_Pythagore",
+      "level": "3ac",
+      "subject": "mathematiques",
+      "chapter": "Théorème de Pythagore et cosinus d'un angle aigu",
+      "type": "COURSE",
+      "tags": ["géométrie", "triangle rectangle"]
+    },
+    {
+      "url": "https://fr.wikipedia.org/wiki/Limite_(math%C3%A9matiques)",
+      "level": "2bac-pc",
+      "subject": "mathematiques",
+      "chapter": "Limites et continuité",
+      "type": "SUMMARY"
+    }
+  ]
+}

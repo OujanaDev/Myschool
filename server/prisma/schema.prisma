@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String
+  role         String        @default("STUDENT") // STUDENT | ADMIN
+  plan         String        @default("FREE")    // FREE | PREMIUM
+  premiumUntil DateTime?
+  levelId      String?
+  level        Level?        @relation(fields: [levelId], references: [id])
+  createdAt    DateTime      @default(now())
+  attempts     QuizAttempt[]
+  progress     Progress[]
+  bookmarks    Bookmark[]
+  studyPlan    StudyPlan?
+}
+
+model Cycle {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String  @default("")
+  order       Int     @default(0)
+  levels      Level[]
+}
+
+model Level {
+  id          String         @id @default(cuid())
+  cycleId     String
+  cycle       Cycle          @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  name        String
+  shortName   String         @default("")
+  slug        String         @unique
+  track       String         @default("") // filière / groupe
+  description String         @default("")
+  order       Int            @default(0)
+  subjects    LevelSubject[]
+  users       User[]
+}
+
+model Subject {
+  id     String         @id @default(cuid())
+  name   String
+  slug   String         @unique
+  icon   String         @default("book")
+  color  String         @default("#0F766E")
+  levels LevelSubject[]
+}
+
+model LevelSubject {
+  id        String    @id @default(cuid())
+  levelId   String
+  level     Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  subjectId String
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  order     Int       @default(0)
+  chapters  Chapter[]
+
+  @@unique([levelId, subjectId])
+}
+
+model Chapter {
+  id             String       @id @default(cuid())
+  levelSubjectId String
+  levelSubject   LevelSubject @relation(fields: [levelSubjectId], references: [id], onDelete: Cascade)
+  title          String
+  semester       Int          @default(1)
+  order          Int          @default(0)
+  lessons        Lesson[]
+  quizzes        Quiz[]
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  chapterId   String
+  chapter     Chapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  title       String
+  type        String     @default("COURSE") // COURSE | SUMMARY | EXERCISE | EXAM | VIDEO
+  content     String     @default("")       // markdown (+ LaTeX)
+  videoUrl    String     @default("")
+  fileUrl     String     @default("")
+  durationMin Int        @default(20)
+  isPremium   Boolean    @default(false)
+  isPublished Boolean    @default(true)
+  order       Int        @default(0)
+  views       Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  progress    Progress[]
+  bookmarks   Bookmark[]
+  search      LessonSearch?
+}
+
+// Search row of a lesson: its short fields, then its content folded (no accents, lower case) by src/search.ts.
+// The text comes last so that reading the other fields never goes through it.
+model LessonSearch {
+  lessonId    String  @id
+  lesson      Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  chapterId   String
+  title       String
+  type        String
+  isPremium   Boolean
+  isPublished Boolean
+  order       Int
+  text        String
+
+  @@index([isPublished])
+}
+
+model Quiz {
+  id          String        @id @default(cuid())
+  chapterId   String
+  chapter     Chapter       @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  title       String
+  description String        @default("")
+  durationMin Int           @default(10)
+  isPremium   Boolean       @default(false)
+  isPublished Boolean       @default(true)
+  order       Int           @default(0)
+  questions   Question[]
+  attempts    QuizAttempt[]
+  createdAt   DateTime      @default(now())
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text        String
+  explanation String   @default("")
+  order       Int      @default(0)
+  options     Option[]
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  order      Int      @default(0)
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  answers   String   @default("{}") // JSON { questionId: optionId }
+  createdAt DateTime @default(now())
+}
+
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@unique([userId, lessonId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, lessonId])
+}
+
+model StudyPlan {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal       String   @default("")
+  examDate   DateTime?
+  hoursPerWeek Int    @default(6)
+  subjectIds String   @default("[]") // JSON array
+  plan       String   @default("[]") // JSON generated plan
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

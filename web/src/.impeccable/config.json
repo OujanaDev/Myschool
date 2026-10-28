@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "web/src/index.css"
+        ],
+        "createdAt": "2026-10-27T22:04:19.966Z",
+        "reason": "Claude triage: false positive, .input (L71) is slate-500 placeholder on a bg-white field, no colored background; pre-existing line not touched by this change"
+      }
+    ]
+  }
+}
