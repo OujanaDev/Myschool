@@ -53,10 +53,8 @@ export default function PrivacyPage() {
 
           <h2>Préambule</h2>
           <p>
-            Naja7School est une plateforme éducative (site web et applications Android et iOS) éditée par {PUBLISHER.company},{" "}
-            {PUBLISHER.legalForm}, dont le siège social est situé {PUBLISHER.address}, immatriculée au Registre du
-            Commerce de {PUBLISHER.registry} (ci-après « Naja7School » ou « nous »), responsable du traitement de vos
-            données personnelles.
+            Naja7School est une plateforme éducative  destinée à faciliter l'apprentissage et la révision pour les élèves et étudiants.
+            
           </p>
           <p>Cette politique :</p>
           <ul>
@@ -66,8 +64,7 @@ export default function PrivacyPage() {
           </ul>
           <p>
             Elle s'applique dans le respect de la loi n° 09-08 relative à la protection des personnes physiques à l'égard
-            du traitement des données à caractère personnel. Ce traitement a été déclaré à la Commission nationale de
-            contrôle de la protection des données à caractère personnel (CNDP) sous le numéro {PUBLISHER.cndp}.
+            du traitement des données à caractère personnel.
           </p>
 
           <h2 id="donnees">1. Données personnelles</h2>
@@ -179,7 +176,7 @@ export default function PrivacyPage() {
           <p>Vos données ne sont accessibles qu'aux personnes qui en ont besoin :</p>
           <ul>
             <li>l'équipe Naja7School habilitée (support, administration de la plateforme) ;</li>
-            <li>notre hébergeur : {PUBLISHER.host} ;</li>
+            
             <li>notre prestataire de réseau et de sécurité, qui protège le site et accélère son affichage ;</li>
             <li>notre prestataire de paiement, pour les abonnements Premium ;</li>
             <li>les autorités administratives ou judiciaires, uniquement lorsque la loi nous y oblige.</li>
@@ -227,8 +224,7 @@ export default function PrivacyPage() {
 
           <h2 id="contact">10. Contact</h2>
           <p>
-            Pour toute question sur cette politique ou sur vos données : {PUBLISHER.email}, ou par courrier à{" "}
-            {PUBLISHER.company}, {PUBLISHER.address}.
+            Pour toute question sur cette politique ou sur vos données : {PUBLISHER.email}.
           </p>
 
           <h2 id="modifications">11. Modifications</h2>

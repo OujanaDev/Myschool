@@ -20,7 +20,8 @@ const CONCOURS_TONES = ["bg-[#dcefe9] text-[#18846f]", "bg-[#e3e9fa] text-[#526f
 const concoursIcon = (slug: string) => (/medecine/.test(slug) ? Stethoscope : /ensa/.test(slug) ? Cog : BriefcaseBusiness);
 
 // Figures shown in the proof band. The first two are the owner's claims (not measured by the app): edit them here.
-const CLAIMS = { students: 5000, bacRate: 100 };
+/* Figures shown on the home page, fixed here rather than read from the catalogue (the owner's claims). */
+const CLAIMS = { students: 5000, bacRate: 100, lessons: 5000, questions: 10000 };
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -209,7 +210,7 @@ export default function Home() {
               <span className="grid h-[29px] w-[29px] place-items-center rounded-[8px] bg-[#5b7a8c] text-white"><Languages className="h-3.5 w-3.5" /></span>
             </div>
             <p className="m-0 text-xs leading-[1.4] text-ink">
-              <strong>{fmt(stats?.lessons)} cours et exercices</strong> dans {fmt(stats?.levels)} niveaux
+              <strong>+{fmt(CLAIMS.lessons)} cours et exercices</strong> dans {fmt(stats?.levels)} niveaux
               <br />
               <span className="text-muted">{fmt(stats?.subjects)} matières, du primaire aux concours</span>
             </p>
@@ -277,8 +278,8 @@ export default function Home() {
             {[
               { icon: Users, value: CLAIMS.students, prefix: "+", label: "étudiants inscrits", sub: "et satisfaits" },
               { icon: GraduationCap, value: CLAIMS.bacRate, suffix: " %", label: "de réussite au bac", sub: "chez nos élèves" },
-              { icon: BookOpen, value: stats?.lessons, label: "cours et exercices", sub: `dans ${fmt(stats?.levels)} niveaux` },
-              { icon: ListChecks, value: stats?.questions, label: "questions de QCM", sub: "corrigées et expliquées" },
+              { icon: BookOpen, value: CLAIMS.lessons, prefix: "+", label: "cours et exercices", sub: `dans ${fmt(stats?.levels)} niveaux` },
+              { icon: ListChecks, value: CLAIMS.questions, prefix: "+", label: "questions de QCM", sub: "corrigées et expliquées" },
             ].map(({ icon: Icon, value, prefix, suffix, label, sub }) => (
               <div key={label} className="flex items-start gap-3">
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-white text-brand-600 shadow-[0_6px_14px_rgba(40,73,66,0.08)]"><Icon className="h-5 w-5" aria-hidden="true" /></span>
@@ -414,12 +415,12 @@ export default function Home() {
             </Link>
             <dl className="mt-11 flex flex-wrap gap-6 sm:gap-9">
               {[
-                { v: stats?.questions, l: "Questions" },
+                { v: CLAIMS.questions, l: "Questions", prefix: "+" },
                 { v: stats?.subjects, l: "Matières" },
                 { v: stats?.quizzes, l: "QCM" },
-              ].map((s) => (
+              ].map((s: { v: number | undefined; l: string; prefix?: string }) => (
                 <div key={s.l} className="border-l border-white/25 pl-3.5">
-                  <dd className="m-0 font-display text-[23px] font-bold">{fmt(s.v)}</dd>
+                  <dd className="m-0 font-display text-[23px] font-bold">{s.prefix ?? ""}{fmt(s.v)}</dd>
                   <dt className="mt-0.5 text-[11px] text-white/85">{s.l}</dt>
                 </div>
               ))}
