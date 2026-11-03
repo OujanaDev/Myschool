@@ -45,13 +45,6 @@ npm start            # l'API sert l'application web sur http://localhost:4000
 
 ## Comptes de démonstration
 
-| Rôle | Email | Mot de passe |
-|---|---|---|
-| Administrateur | admin@myschool.ma | Admin1234! |
-| Élève gratuit (2 Bac PC) | eleve@myschool.ma | Eleve1234! |
-| Élève premium (3AC) | premium@myschool.ma | Premium1234! |
-
-`npm run db:reset` remet la base à l'état initial.
 
 ## Fonctionnalités
 
