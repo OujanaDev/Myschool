@@ -1,4 +1,4 @@
-export type Cycle = { id: string; name: string; slug: string; description: string; order: number; levels: Level[] };
+export type Cycle = { id: string; name: string; slug: string; description: string; order: number; levels: Level[]; comingSoon?: boolean };
 export type Level = {
   id: string;
   cycleId?: string;
@@ -21,10 +21,18 @@ export type User = {
   premiumUntil: string | null;
   levelId: string | null;
   level?: Level | null;
+  hasGoogle?: boolean;
   createdAt?: string;
   _count?: { attempts: number; progress: number };
 };
 export type LessonType = "COURSE" | "SUMMARY" | "EXERCISE" | "EXAM" | "VIDEO";
+/** GET /billing/plans: amounts in centimes of dirham, the launch offer when it is still running. */
+export type BillingPlans = {
+  currency: string;
+  promo: { percent: number; until: string } | null;
+  stripe: boolean;
+  plans: { id: "monthly" | "yearly"; name: string; months: number; amount: number; regular: number }[];
+};
 export type LessonLite = { id: string; title: string; type: LessonType; isPremium: boolean; durationMin?: number; views?: number };
 export type QuizLite = { id: string; title: string; isPremium: boolean; durationMin?: number; _count?: { questions: number } };
 export type Chapter = { id: string; title: string; semester: number; order: number; lessons: LessonLite[]; quizzes: QuizLite[] };
@@ -80,6 +88,14 @@ export type StudyPlan = {
   subjectIds: string[];
   plan: { week: number; minutes: number; tasks: StudyTask[] }[];
   coverage?: { planned: number; total: number };
+};
+export type HomeData = {
+  stats: { levels: number; subjects: number; lessons: number; quizzes: number; questions: number };
+  cycles: { id: string; name: string; slug: string; description: string; levels: number; comingSoon: boolean }[];
+  spotlight: { id: string; title: string; durationMin: number; formula: string | null; hasVideo: boolean; chapter: string; subject: Subject; level: Level } | null;
+  featured: { id: string; title: string; cycle: string; lessons: number; quizzes: number; minutes: number; subject: Subject; level: Level }[];
+  concours: (Level & { subjects: string[] })[];
+  demoQuiz: { id: string; title: string; subject: string; level: string; questions: QuizQuestion[] } | null;
 };
 export type SearchResult = {
   lessons: { id: string; title: string; type: LessonType; isPremium: boolean; chapter: string; level: Level; subject: Subject }[];

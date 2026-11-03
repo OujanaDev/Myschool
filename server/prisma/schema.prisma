@@ -11,6 +11,7 @@ model User {
   id           String        @id @default(cuid())
   email        String        @unique
   password     String
+  googleId     String?       @unique // Google account linked by « Continuer avec Google »
   name         String
   role         String        @default("STUDENT") // STUDENT | ADMIN
   plan         String        @default("FREE")    // FREE | PREMIUM
@@ -22,6 +23,17 @@ model User {
   progress     Progress[]
   bookmarks    Bookmark[]
   studyPlan    StudyPlan?
+}
+
+/// A Stripe Checkout payment that activated Premium; one row per session, so a confirmation and the webhook
+/// cannot both extend the same subscription.
+model Payment {
+  id        String   @id // Stripe Checkout session id
+  userId    String
+  plan      String // monthly | yearly
+  amount    Int // in centimes
+  currency  String   @default("mad")
+  createdAt DateTime @default(now())
 }
 
 model Cycle {

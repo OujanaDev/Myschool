@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T00:00:00Z",
+  "title": "Design System: Naja7School",
+  "extensions": {
+    "colorMeta": {
+      "teal": { "role": "primary", "displayName": "Deep Teal", "canonical": "#0b7d76", "tonalRamp": ["#123c3b", "#0d524e", "#0a6761", "#0b7d76", "#1f8f86", "#4fa699", "#86c3b8", "#b7dbd3", "#d9ece6", "#eef6f4"] },
+      "teal-deep": { "role": "primary", "displayName": "Teal Deep", "canonical": "#0a6761", "tonalRamp": ["#123c3b", "#0d524e", "#0a6761", "#0b7d76", "#1f8f86", "#4fa699", "#86c3b8", "#d9ece6"] },
+      "teal-bright": { "role": "primary", "displayName": "Teal Bright", "canonical": "#1f8f86", "tonalRamp": ["#123c3b", "#0d524e", "#0a6761", "#0b7d76", "#1f8f86", "#4fa699", "#86c3b8", "#d9ece6"] },
+      "teal-soft": { "role": "primary", "displayName": "Teal Soft", "canonical": "#4fa699", "tonalRamp": ["#123c3b", "#0d524e", "#0a6761", "#0b7d76", "#1f8f86", "#4fa699", "#86c3b8", "#d9ece6"] },
+      "teal-wash": { "role": "primary", "displayName": "Teal Wash", "canonical": "#eef6f4", "tonalRamp": ["#123c3b", "#0a6761", "#0b7d76", "#4fa699", "#86c3b8", "#b7dbd3", "#d9ece6", "#eef6f4"] },
+      "teal-tint": { "role": "primary", "displayName": "Teal Tint", "canonical": "#d9ece6", "tonalRamp": ["#123c3b", "#0a6761", "#0b7d76", "#4fa699", "#86c3b8", "#b7dbd3", "#d9ece6", "#eef6f4"] },
+      "teal-band": { "role": "primary", "displayName": "Teal Band", "canonical": "#157b74", "tonalRamp": ["#0b3f3b", "#0e5551", "#126a64", "#157b74", "#3a948d", "#6fb3ac", "#a6d1cc", "#dcecea"] },
+      "teal-night": { "role": "primary", "displayName": "Teal Night", "canonical": "#123c3b", "tonalRamp": ["#0b2726", "#123c3b", "#1a5150", "#256765", "#3f807d", "#6e9f9c", "#a3c2c0", "#dbe7e6"] },
+      "apricot": { "role": "secondary", "displayName": "Apricot", "canonical": "#ee8d51", "tonalRamp": ["#5a2a0f", "#8a4219", "#b55f2d", "#d87941", "#ee8d51", "#f7aa73", "#f9c69f", "#fde8d6"] },
+      "apricot-light": { "role": "secondary", "displayName": "Apricot Light", "canonical": "#f7aa73", "tonalRamp": ["#5a2a0f", "#8a4219", "#b55f2d", "#d87941", "#ee8d51", "#f7aa73", "#f9c69f", "#fde8d6"] },
+      "apricot-deep": { "role": "secondary", "displayName": "Apricot Deep", "canonical": "#d87941", "tonalRamp": ["#5a2a0f", "#8a4219", "#b55f2d", "#d87941", "#ee8d51", "#f7aa73", "#f9c69f", "#fde8d6"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#173435", "tonalRamp": ["#0d2021", "#173435", "#2c4a4b", "#476162", "#647576", "#8a9a9a", "#b5c1c1", "#e0e6e6"] },
+      "muted": { "role": "neutral", "displayName": "Muted", "canonical": "#647576", "tonalRamp": ["#173435", "#2c4a4b", "#476162", "#647576", "#7f8f90", "#9eabab", "#c0c9c9", "#e4e9e9"] },
+      "on-tint": { "role": "neutral", "displayName": "On-Tint Grey", "canonical": "#3f5752", "tonalRamp": ["#15201d", "#263531", "#3f5752", "#56706a", "#738b85", "#97aaa5", "#bfcbc8", "#e4eae8"] },
+      "on-mint": { "role": "neutral", "displayName": "On-Mint Grey", "canonical": "#4f6560", "tonalRamp": ["#19221f", "#2f3d39", "#4f6560", "#64796f", "#80938c", "#a1b0ab", "#c5cfcb", "#e6ebe9"] },
+      "surface": { "role": "neutral", "displayName": "Cream Paper", "canonical": "#fbf8f0", "tonalRamp": ["#3d3828", "#6b6245", "#9a8e68", "#c4b995", "#e3dcc2", "#f0ebdb", "#f7f3e7", "#fbf8f0"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#fffdf8", "tonalRamp": ["#3d3828", "#6b6245", "#9a8e68", "#c4b995", "#e3dcc2", "#f0ebdb", "#f9f6ee", "#fffdf8"] },
+      "white": { "role": "neutral", "displayName": "White", "canonical": "#ffffff", "tonalRamp": ["#262626", "#404040", "#595959", "#737373", "#8c8c8c", "#bfbfbf", "#e6e6e6", "#ffffff"] },
+      "line": { "role": "neutral", "displayName": "Paper Line", "canonical": "#eee9de", "tonalRamp": ["#3a3426", "#625a44", "#8e8465", "#b8ad8e", "#d6cdb5", "#e4ddca", "#eee9de", "#f8f5ee"] },
+      "line-field": { "role": "neutral", "displayName": "Field Line", "canonical": "#dce5df", "tonalRamp": ["#1f2d25", "#3a4d41", "#5a7063", "#7f948a", "#a6b8ae", "#c4d2c9", "#dce5df", "#eef3f0"] },
+      "line-card": { "role": "neutral", "displayName": "Card Line", "canonical": "#e0e7e1", "tonalRamp": ["#232b24", "#3f4c41", "#5f6f62", "#849488", "#a9b7ac", "#c8d2ca", "#e0e7e1", "#f1f4f1"] },
+      "mint": { "role": "neutral", "displayName": "Mint Strip", "canonical": "#e8efea", "tonalRamp": ["#1f2d25", "#3a4d41", "#5a7063", "#7f948a", "#a6b8ae", "#c9d6cd", "#e8efea", "#f4f8f5"] },
+      "mint-panel": { "role": "neutral", "displayName": "Mint Panel", "canonical": "#e5eee9", "tonalRamp": ["#1f2d25", "#3a4d41", "#5a7063", "#7f948a", "#a6b8ae", "#c6d5cc", "#e5eee9", "#f3f8f5"] },
+      "chip-ground": { "role": "neutral", "displayName": "Chip Ground", "canonical": "#edf2ee", "tonalRamp": ["#1f2d25", "#3a4d41", "#5a7063", "#7f948a", "#a6b8ae", "#cdd8cf", "#edf2ee", "#f6f9f7"] },
+      "tint-apricot": { "role": "tertiary", "displayName": "Primaire Apricot", "canonical": "#fee8d7", "tonalRamp": ["#5a2a0f", "#8a4219", "#b55f2d", "#d87941", "#ee8d51", "#f7aa73", "#fbd0b5", "#fee8d7"] },
+      "tint-sky": { "role": "tertiary", "displayName": "Collège Sky", "canonical": "#dfeef4", "tonalRamp": ["#143a47", "#245c70", "#357e98", "#5a9db5", "#86bacd", "#b2d5e2", "#dfeef4", "#f0f7fa"] },
+      "tint-lilac": { "role": "tertiary", "displayName": "Lycée Lilac", "canonical": "#e9e2f5", "tonalRamp": ["#2d1f4a", "#4a3579", "#6a51a6", "#8c76c0", "#ad9cd4", "#cbbfe5", "#e9e2f5", "#f4f0fa"] },
+      "tint-mint": { "role": "tertiary", "displayName": "Supérieur Mint", "canonical": "#dcefe6", "tonalRamp": ["#123c2d", "#1d5c45", "#2b7d5f", "#4c9b7d", "#7ab79f", "#aad3c2", "#dcefe6", "#eef7f2"] },
+      "success": { "role": "tertiary", "displayName": "Correct Green", "canonical": "#3ca876", "tonalRamp": ["#0f3322", "#1a4f36", "#276f4d", "#3ca876", "#5fbb90", "#8dcfae", "#bfe4d0", "#e5f5ea"] },
+      "success-wash": { "role": "tertiary", "displayName": "Correct Wash", "canonical": "#e5f5ea", "tonalRamp": ["#0f3322", "#1a4f36", "#276f4d", "#3ca876", "#5fbb90", "#8dcfae", "#bfe4d0", "#e5f5ea"] },
+      "error": { "role": "tertiary", "displayName": "Wrong Red", "canonical": "#dc7474", "tonalRamp": ["#4a1a1a", "#7a2b2b", "#a84646", "#c75c5c", "#dc7474", "#e89a9a", "#f3c4c4", "#ffeaea"] },
+      "error-wash": { "role": "tertiary", "displayName": "Wrong Wash", "canonical": "#ffeaea", "tonalRamp": ["#4a1a1a", "#7a2b2b", "#a84646", "#c75c5c", "#dc7474", "#e89a9a", "#f3c4c4", "#ffeaea"] },
+      "on-night-muted": { "role": "neutral", "displayName": "On-Night Muted", "canonical": "#bdd2ca", "tonalRamp": ["#0b2726", "#123c3b", "#256765", "#3f807d", "#6e9f9c", "#93b8b1", "#bdd2ca", "#e3ece8"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only; 44 / 52 / 61 px at base / sm / lg, one word highlighted in teal." },
+      "headline": { "displayName": "Headline", "purpose": "Section lead-ins, two lines with a hard break; 34 / 40 px, 36 / 45 px on the teal band." },
+      "title": { "displayName": "Title", "purpose": "Card titles at 19 px semibold; cycle and concours names step to 23-24 px bold." },
+      "numeral": { "displayName": "Numeral", "purpose": "Numbers meant to be felt: 23 px band stats, 40 px price, 56 px QCM score; unit in DM Sans 13 px." },
+      "lead": { "displayName": "Lead", "purpose": "Hero paragraph, max 460 px wide." },
+      "body": { "displayName": "Body", "purpose": "Descriptions and copy at 13-15 px; answers at 13 px / 20 px." },
+      "label": { "displayName": "Label", "purpose": "Card metadata, level tags, stat captions, chip text and the lesson card's reading bar at 11 px, the floor; muted on light grounds, on-tint on pastels, white 85 % on teal." }
+    },
+    "shadows": [
+      { "name": "button-lift", "value": "0 5px 12px rgba(11,125,118,0.15)", "purpose": "Primary button when it is the surface's main call (nav, hero, Premium)." },
+      { "name": "card-hover", "value": "0 15px 28px rgba(43,75,66,0.12)", "purpose": "Catalogue cards on hover with translateY(-2px)." },
+      { "name": "card-hover-concours", "value": "0 14px 30px rgba(28,58,48,0.12)", "purpose": "Concours cards on hover with translateY(-4px)." },
+      { "name": "showcase-rest", "value": "0 15px 35px rgba(50,83,76,0.12)", "purpose": "Premium price card at rest." },
+      { "name": "hero-card", "value": "0 22px 55px rgba(40,73,66,0.17)", "purpose": "The tilted lesson card in the hero." },
+      { "name": "float-chip", "value": "0 12px 30px rgba(40,73,66,0.15)", "purpose": "Drifting QCM terminé and score chips." },
+      { "name": "on-teal", "value": "0 25px 50px rgba(8,70,66,0.33)", "purpose": "The QCM panel sitting on the teal band." },
+      { "name": "focus-ring", "value": "0 0 0 2px rgba(31,143,134,0.2)", "purpose": "Search and input focus ring, paired with a teal-bright border." }
+    ],
+    "motion": [
+      { "name": "fade-up", "value": "fade-up 0.35s ease-out both (opacity 0→1, translateY 8px→0)", "purpose": "Hero copy and preview entrance; preview delayed 120 ms." },
+      { "name": "drift", "value": "drift 3.2s ease-in-out infinite alternate (translateY 0→-7px)", "purpose": "Floating chips in the hero; second chip delayed 1.1 s." },
+      { "name": "orbit", "value": "orbit 60s linear infinite (rotate 360deg); outer ring 90s reversed", "purpose": "Dashed orbit rings behind the lesson card." },
+      { "name": "colors", "value": "transition-colors 150ms", "purpose": "Buttons, chips, nav links." },
+      { "name": "lift", "value": "transition: transform, box-shadow 150ms", "purpose": "Grid cards on hover." },
+      { "name": "progress", "value": "width 300ms", "purpose": "QCM progress bar." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) { animation: none }", "purpose": "fade-up, drift and orbit are all disabled." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Teal action button with trailing arrow; the only call-to-action colour.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Découvrir les cours <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--color-brand-600, #0b7d76); color: #fff; font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; font-weight: 600; padding: 16px 20px; border-radius: 9px; text-decoration: none; box-shadow: 0 5px 12px rgba(11,125,118,0.15); transition: background-color 150ms; cursor: pointer; } .ds-btn-primary:hover { background: var(--color-brand-700, #0a6761); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Apricot upsell button used only for the nav Premium link when a free user is logged in.",
+      "html": "<a class=\"ds-btn-accent\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z\"/><path d=\"M5 21h14\"/></svg> Premium</a>",
+      "css": ".ds-btn-accent { display: inline-flex; align-items: center; gap: 8px; background: var(--color-accent-500, #ee8d51); color: var(--color-ink, #173435); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 12px; text-decoration: none; transition: background-color 150ms; } .ds-btn-accent:hover { background: var(--color-accent-400, #f7aa73); } .ds-btn-accent:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Quiet section-level secondary action on cream: 1 px teal-grey border, 8 px radius, ink text, teal arrow; hover ground white.",
+      "html": "<a class=\"ds-btn-outline\" href=\"#\">Voir toute la bibliothèque <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#0b7d76\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid #b8c9c3; color: var(--color-ink, #173435); font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; font-weight: 700; padding: 12px 16px; border-radius: 8px; text-decoration: none; transition: background-color 150ms; } .ds-btn-outline:hover { background: #fff; } .ds-btn-outline:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "Pill cycle filter; active is teal on white, idle sits on chip ground in muted.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip--active\" aria-pressed=\"true\">Tous</button><button class=\"ds-chip\" aria-pressed=\"false\">Lycée</button><button class=\"ds-chip\" aria-pressed=\"false\">Supérieur</button></div>",
+      "css": ".ds-chips { display: flex; gap: 8px; flex-wrap: wrap; } .ds-chip { border: 0; border-radius: 9999px; padding: 8px 14px; font-family: 'DM Sans', system-ui, sans-serif; font-size: 12px; font-weight: 600; background: #edf2ee; color: var(--color-muted, #647576); cursor: pointer; transition: background-color 150ms; } .ds-chip:hover { background: var(--color-brand-100, #d9ece6); } .ds-chip--active, .ds-chip--active:hover { background: var(--color-brand-600, #0b7d76); color: #fff; } .ds-chip:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "White search field with teal icon, teal-grey border and a soft teal focus ring.",
+      "html": "<label class=\"ds-search\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input type=\"search\" placeholder=\"Rechercher un chapitre, une matière…\" /></label>",
+      "css": ".ds-search { display: flex; align-items: center; gap: 8px; height: 48px; width: 360px; max-width: 100%; padding: 0 14px; background: #fff; border: 1px solid #dce5df; border-radius: 9px; color: var(--color-brand-600, #0b7d76); transition: border-color 150ms, box-shadow 150ms; } .ds-search:focus-within { border-color: var(--color-brand-500, #1f8f86); box-shadow: 0 0 0 2px rgba(31,143,134,0.2); } .ds-search input { flex: 1; min-width: 0; border: 0; background: transparent; outline: none; font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; color: var(--color-ink, #173435); caret-color: var(--color-brand-600, #0b7d76); } .ds-search input::placeholder { color: var(--color-muted, #647576); }"
+    },
+    {
+      "name": "Top Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "78 px paper bar with the roof mark, teal-grey links, teal active state and a primary Commencer button.",
+      "html": "<header class=\"ds-nav\"><a class=\"ds-nav__logo\" href=\"#\"><span class=\"ds-nav__mark\"><svg viewBox=\"0 0 64 64\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 40V24l16-8 16 8v16\"/><circle cx=\"32\" cy=\"34\" r=\"5\" fill=\"#f7aa73\" stroke=\"none\"/></svg></span><span class=\"ds-nav__word\">Naja<i>7</i>School</span></a><nav class=\"ds-nav__links\"><a class=\"ds-nav__link ds-nav__link--active\" href=\"#\">Accueil</a><a class=\"ds-nav__link\" href=\"#\">Cours</a><a class=\"ds-nav__link\" href=\"#\">Concours</a><a class=\"ds-nav__link\" href=\"#\">QCM</a><a class=\"ds-nav__link\" href=\"#\">Premium</a></nav><a class=\"ds-nav__login\" href=\"#\">Se connecter</a><a class=\"ds-nav__cta\" href=\"#\">Commencer →</a></header>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 24px; height: 78px; padding: 0 20px; background: rgba(255,253,248,0.95); border-bottom: 1px solid var(--color-line, #eee9de); font-family: 'DM Sans', system-ui, sans-serif; } .ds-nav__logo { display: flex; align-items: center; gap: 10px; text-decoration: none; } .ds-nav__mark { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: var(--color-brand-600, #0b7d76); color: #fff; } .ds-nav__word { font-family: Outfit, 'DM Sans', system-ui, sans-serif; font-size: 25px; font-weight: 700; letter-spacing: -0.02em; color: var(--color-ink, #173435); } .ds-nav__word i { font-style: normal; color: var(--color-accent-500, #ee8d51); } .ds-nav__links { display: flex; gap: 12px; } .ds-nav__link { padding: 8px 10px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #637171; text-decoration: none; transition: color 150ms; } .ds-nav__link:hover { color: var(--color-brand-600, #0b7d76); } .ds-nav__link--active { font-weight: 700; color: var(--color-brand-600, #0b7d76); } .ds-nav__login { margin-left: auto; padding: 0 8px; font-size: 14px; font-weight: 600; color: var(--color-ink, #173435); text-decoration: none; } .ds-nav__login:hover { color: var(--color-brand-600, #0b7d76); } .ds-nav__cta { padding: 12px 16px; border-radius: 9px; background: var(--color-brand-600, #0b7d76); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; box-shadow: 0 5px 12px rgba(11,125,118,0.15); } .ds-nav__cta:hover { background: var(--color-brand-700, #0a6761); } .ds-nav a:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    },
+    {
+      "name": "Catalogue Card",
+      "kind": "card",
+      "refersTo": "card-catalogue",
+      "description": "White chapter card with subject tile, 11 px level tag, Outfit title, muted meta rule and a teal link; lifts on hover.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card__top\"><span class=\"ds-card__tile\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 7V4H6l6 8-6 8h12v-3\"/></svg></span><span class=\"ds-card__tag\">1ère Bac Sciences Mathématiques</span></div><h3 class=\"ds-card__title\">Dénombrement et probabilités</h3><p class=\"ds-card__sub\">Mathématiques</p><div class=\"ds-card__meta\"><span>19 leçons</span><span>10 h 30</span><span>1 QCM</span></div><a class=\"ds-card__link\" href=\"#\">Voir le chapitre →</a></article>",
+      "css": ".ds-card { display: flex; flex-direction: column; width: 300px; padding: 20px; background: #fff; border: 1px solid #e0e7e1; border-radius: 13px; font-family: 'DM Sans', system-ui, sans-serif; color: var(--color-ink, #173435); transition: transform 150ms, box-shadow 150ms; } .ds-card:hover { transform: translateY(-2px); box-shadow: 0 15px 28px rgba(43,75,66,0.12); } .ds-card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; } .ds-card__tile { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px; background: var(--color-brand-50, #eef6f4); color: var(--color-brand-600, #0b7d76); } .ds-card__tag { padding: 4px 8px; border-radius: 5px; background: #f1f4f1; font-size: 11px; color: var(--color-muted, #647576); } .ds-card__title { margin: 20px 0 8px; font-family: Outfit, 'DM Sans', system-ui, sans-serif; font-size: 19px; font-weight: 600; line-height: 1.375; } .ds-card__sub { margin: 0; font-size: 12px; line-height: 1.55; color: var(--color-muted, #647576); } .ds-card__meta { display: flex; gap: 14px; margin: 16px 0; padding-top: 12px; border-top: 1px solid #edf0ed; font-size: 11px; color: var(--color-muted, #647576); } .ds-card__link { margin-top: auto; font-size: 12px; font-weight: 700; color: var(--color-brand-600, #0b7d76); text-decoration: none; } .ds-card__link:hover { text-decoration: underline; }"
+    },
+    {
+      "name": "Cycle Panel",
+      "kind": "card",
+      "refersTo": "panel-cycle",
+      "description": "Flat pastel panel per cycle with a line icon, Outfit name, on-tint secondary text and a huge translucent numeral bleeding off the corner.",
+      "html": "<article class=\"ds-cycle\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z\"/><path d=\"M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12\"/></svg><small>6 niveaux</small><h3>Primaire</h3><p>De la 1ère à la 6ème année du primaire</p><a href=\"#\">Explorer →</a><strong aria-hidden=\"true\">01</strong></article>",
+      "css": ".ds-cycle { position: relative; display: flex; flex-direction: column; width: 270px; min-height: 285px; padding: 20px; overflow: hidden; border-radius: 13px; background: #fee8d7; font-family: 'DM Sans', system-ui, sans-serif; color: var(--color-ink, #173435); } .ds-cycle small { display: block; margin-top: 24px; font-size: 11px; color: #3f5752; } .ds-cycle h3 { margin: 4px 0; font-family: Outfit, 'DM Sans', system-ui, sans-serif; font-size: 24px; font-weight: 700; } .ds-cycle p { margin: 0; max-width: 190px; min-height: 37px; font-size: 12px; line-height: 1.55; color: #3f5752; } .ds-cycle a { position: relative; z-index: 1; margin-top: 16px; font-size: 12px; font-weight: 700; color: var(--color-ink, #173435); text-decoration: none; } .ds-cycle a:hover { color: var(--color-brand-600, #0b7d76); } .ds-cycle strong { position: absolute; right: 16px; bottom: -18px; font-family: Outfit, 'DM Sans', system-ui, sans-serif; font-size: 100px; font-weight: 800; line-height: 1; color: rgba(255,255,255,0.55); pointer-events: none; }"
+    },
+    {
+      "name": "QCM Answer Row",
+      "kind": "custom",
+      "refersTo": "answer-option",
+      "description": "Selectable answer row inside the QCM panel with teal letter, selected, correct and wrong states.",
+      "html": "<div class=\"ds-answers\"><button class=\"ds-answer\"><b>A.</b> 1</button><button class=\"ds-answer ds-answer--selected\" aria-pressed=\"true\"><b>B.</b> 2</button><button class=\"ds-answer ds-answer--correct\" disabled><b>C.</b> 3</button><button class=\"ds-answer ds-answer--wrong\" disabled><b>D.</b> 8</button></div>",
+      "css": ".ds-answers { display: grid; gap: 8px; width: 337px; max-width: 100%; } .ds-answer { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border: 1px solid #e1e8e4; border-radius: 7px; background: #fff; font-family: 'DM Sans', system-ui, sans-serif; font-size: 13px; line-height: 20px; color: var(--color-ink, #173435); text-align: left; cursor: pointer; transition: background-color 150ms, border-color 150ms; } .ds-answer b { color: var(--color-brand-600, #0b7d76); } .ds-answer:hover:not(:disabled) { border-color: var(--color-brand-600, #0b7d76); background: #ebf7f3; } .ds-answer--selected { border-color: var(--color-brand-600, #0b7d76); background: #ebf7f3; } .ds-answer--correct { border-color: #3ca876; background: #e5f5ea; cursor: default; } .ds-answer--wrong { border-color: #dc7474; background: #ffeaea; cursor: default; } .ds-answer:focus-visible { outline: 2px solid var(--color-brand-600, #0b7d76); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Cahier on the Kitchen Table",
+    "overview": "Naja7School looks like a well-kept school notebook left open on a warm table: a cream paper ground, deep teal ink for everything that speaks or acts, and a single apricot warmth for the mark's dot, the brand's full stop and the occasional pastel panel. The page is not a dashboard and not a SaaS landing; it is a place where a real lesson card, a real QCM and the real catalogue counts sit on paper. Depth comes from soft, teal-tinted shadows that read as a card lifted off that paper, never from grey system shadows or hard outlines.\n\nDensity is calm. Sections breathe at 80 to 100 px, headlines are large and tightly tracked in Outfit, body copy is DM Sans at 14 to 17 px with generous leading, and no text drops below 11 px. Colour is tonal rather than loud: one deep-teal band for the QCM, one mint panel for Premium, one deep-teal footer, and four pastel cycle tints. Ornament is limited to dashed orbit rings and a few mathematical glyphs (∑, π, x²) drawn in the display face. Icons are Lucide line icons at 14 to 28 px, never icon fonts.",
+    "keyCharacteristics": [
+      "Cream paper ground (`surface`) with a slightly whiter `paper` for the nav and concours cards; white only for lifted cards.",
+      "Deep teal is the only action colour; apricot is warmth, not a second CTA colour.",
+      "Outfit display at negative tracking for every headline and numeral; DM Sans for all running text.",
+      "Teal-tinted blur shadows (rgba of the teal family, 0.12 to 0.33 alpha) with large vertical offset and larger blur.",
+      "One secondary grey (`muted`) on white and cream; darker `on-tint` / `on-mint` greys on pastel grounds; white at 85–90 % on teal.",
+      "Radii live between 5 and 19 px; pills only for filter chips, avatars and the progress ring.",
+      "Motion is slow and ambient (orbit 60 s, drift 3.2 s) and switches off under `prefers-reduced-motion`."
+    ],
+    "rules": [
+      { "name": "The One Ink Rule", "body": "Teal is the only colour that means \"act\". Apricot never sits on a primary button and never colours a link.", "section": "colors" },
+      { "name": "The Teal Grey Rule", "body": "Every grey on the surface leans teal (`muted`, `on-tint`, `line-*`). Blue-slate greys are drift, not system.", "section": "colors" },
+      { "name": "The One Muted Rule", "body": "Secondary text on white or cream is `muted` and nothing paler; on a pastel ground it steps down to `on-tint`; on teal it is white at 85–90 %.", "section": "colors" },
+      { "name": "The One Band Rule", "body": "A page carries at most one full-bleed deep-teal band; everything else stays on paper or in a tinted panel.", "section": "colors" },
+      { "name": "The Outfit Numeral Rule", "body": "Any number the visitor is meant to feel is set in Outfit bold; its unit is DM Sans, smaller and lighter.", "section": "typography" },
+      { "name": "The Eleven-Pixel Floor Rule", "body": "No text renders below 11 px. The only sub-floor glyphs are a numeral's unit suffix (« /20 ») and the ring's « % ».", "section": "typography" },
+      { "name": "The Two-Line Headline Rule", "body": "Section headlines are written as two short lines with an explicit break, never a wrapped paragraph.", "section": "typography" },
+      { "name": "The Teal Shadow Rule", "body": "Shadow colour is always a teal-family rgba; offset is vertical only and blur is at least twice the offset.", "section": "elevation" },
+      { "name": "The Earned Lift Rule", "body": "Only hero and showcase cards carry a shadow at rest; grid cards earn theirs on hover.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do set every headline and numeral in Outfit 700 with −0.03 em tracking, and every paragraph in DM Sans.",
+      "Do tint shadows teal (`rgba(40,73,66,…)` family), vertical offset only, blur ≥ 2 × offset.",
+      "Do keep `surface` as the page ground and lift content on white cards; use `paper` for the nav and quiet cards.",
+      "Do use `muted` for all secondary text on white and cream, `on-tint` on pastel panels, and white at 85–90 % on teal.",
+      "Do write section headlines as two short lines with a hard break.",
+      "Do use 13 px for panels, 9 px for primary buttons and 8 px for outline buttons on new surfaces; reserve pills for chips, avatars and rings.",
+      "Do gate ambient motion (orbit, drift, fade-up) behind `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "Don't use slate or blue-grey utilities for text, borders or shadows; every grey leans teal.",
+      "Don't introduce a grey paler than `muted` for text, and don't set text below 11 px.",
+      "Don't put apricot on a primary action or a link; it is warmth and punctuation only.",
+      "Don't add a second full-bleed teal band to a page.",
+      "Don't give grid cards a shadow at rest; they earn it on hover.",
+      "Don't render icons as fonts or glyphs; use Lucide SVG line icons at 14–28 px.",
+      "Don't invent stats, testimonials or user counts; every number shown is from `/api/home`."
+    ]
+  }
+}

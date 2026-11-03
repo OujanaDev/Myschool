@@ -2,7 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { CheckCircle2, Clock, Eye, HelpCircle, Lock } from "lucide-react";
 import { useFetch } from "../lib/hooks";
 import type { Chapter, Level, Subject } from "../lib/types";
-import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, PremiumBadge, Spinner, SubjectIcon, TypeBadge, ProgressBar } from "../components/ui";
+import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, PremiumBadge, Spinner, SubjectIcon, TypeBadge, ProgressBar, ComingSoon } from "../components/ui";
+import { isComingSoonError } from "../lib/comingSoon";
 import { useAuth } from "../lib/auth";
 
 type Data = { level: Level & { cycle: { name: string } }; subject: Subject; chapters: Chapter[]; completed: string[] };
@@ -13,6 +14,7 @@ export default function SubjectPage() {
   const { isPremium } = useAuth();
 
   if (loading) return <Spinner />;
+  if (isComingSoonError(error)) return <ComingSoon />;
   if (error || !data) return <div className="container-x py-10"><ErrorBox message={error ?? "Erreur"} retry={reload} /></div>;
 
   const total = data.chapters.reduce((a, c) => a + c.lessons.length, 0);

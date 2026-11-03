@@ -88,6 +88,23 @@ if (login.user.role !== "ADMIN") {
 const levels = await api("GET", "/admin/levels");
 const levelSubjectCache = new Map();
 
+// Courses replaced by the regrouped courses of their chapter (reformulate.mjs --mode chapter): their lessons leave
+// the site once, right before the new ones come in.
+for (const e of index.entries.filter((x) => x.site === "final" && x.superseded && x.importedLessonId && (!opts.level || x.level === opts.level))) {
+  if (opts["dry-run"]) {
+    log(`~ (simulation) suppression de la leçon remplacée ${e.importedLessonId} : ${e.title}`);
+    continue;
+  }
+  try {
+    await api("DELETE", `/admin/lessons/${e.importedLessonId}`);
+  } catch (err) {
+    if (!/→ 404/.test(err.message)) throw err;
+  }
+  log(`- leçon remplacée supprimée ${e.importedLessonId} : ${e.title}`);
+  e.importedLessonId = null;
+  saveIndex(index);
+}
+
 async function chaptersOf(levelSubjectId) {
   if (!levelSubjectCache.has(levelSubjectId)) {
     const ls = await api("GET", `/admin/level-subjects/${levelSubjectId}`);
@@ -149,7 +166,8 @@ for (const entry of entries) {
       type: entry.type,
       content: attribution + body.trim(),
       durationMin: Math.max(5, Math.min(120, Math.round(entry.words / 150))),
-      isPremium: false,
+      // Limited free access: the first course of a chapter and its summary are free, the rest (other courses and summaries, exercises) Premium.
+      isPremium: entry.type === "EXERCISE" || (entry.n || 1) > 1,
       isPublished: opts.publish,
       ...(entry.video ? { videoUrl: entry.video } : {}),
       ...(entry.pdfUrl ? { fileUrl: entry.pdfUrl } : {}),

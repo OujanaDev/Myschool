@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Reformule tous les cours prêts par lots de 10 (les documents identiques à un cours déjà reformulé le réutilisent)
+# Reformule les chapitres prêts par lots de 3 : les documents d'un chapitre deviennent 2 à 3 cours complémentaires avec
+# leur résumé (reformulate.mjs --mode chapter ; un chapitre identique dans une autre filière est copié sans appel au modèle)
 # et publie chaque lot complet : les labos interactifs des cours scientifiques sont ajoutés avant la mise en ligne,
 # les titres numérotés et les QCM des nouveaux chapitres juste après. Les labos des cours publiés avant d'en avoir
 # (et des copies d'un cours dans les autres filières) sont rattrapés régulièrement. Continue jusqu'à épuisement des
@@ -8,13 +9,13 @@
 #
 #   bash run-all.sh [options de reformulate, ex. --level 2bac-pc --subject physique-chimie]
 #
-# Variables : MYSCHOOL_ADMIN_PASSWORD (obligatoire), BATCH (10), MODEL (sonnet), CONCURRENCY (2),
+# Variables : MYSCHOOL_ADMIN_PASSWORD (obligatoire), BATCH (3 chapitres), MODEL (sonnet), CONCURRENCY (2),
 #             WAIT (1800 s entre deux vérifications quand il n'y a plus rien à faire), POLISH_EVERY (rattrapage des
 #             labos tous les 2 lots), LABS_MAX (30 cours rattrapés par passage)
 set -u
 cd "$(dirname "$0")"
 : "${MYSCHOOL_ADMIN_PASSWORD:?définissez MYSCHOOL_ADMIN_PASSWORD}"
-BATCH="${BATCH:-10}"
+BATCH="${BATCH:-3}"
 MODEL="${MODEL:-sonnet}"
 CONCURRENCY="${CONCURRENCY:-2}"
 WAIT="${WAIT:-1800}"
@@ -29,7 +30,8 @@ finish_batch() {
   node src/number-titles.mjs --password "$MYSCHOOL_ADMIN_PASSWORD" 2>&1 | grep -E "✗|Terminé"
   # Chapters written differently by a new import are merged, and the seed placeholders they replace unpublished.
   node src/clean-chapters.mjs --apply --password "$MYSCHOOL_ADMIN_PASSWORD" 2>&1 | grep -E "^.{8} [=≈!]|Terminé"
-  node src/qcm.mjs --model "$MODEL" --password "$MYSCHOOL_ADMIN_PASSWORD" 2>&1 | grep -E "✓|✗|!|Terminé"
+  # 20 questions per chapter; a quiz older than a course of its chapter (regrouped courses) is written again.
+  node src/qcm.mjs --refresh --max "${QCM_MAX:-15}" --model "$MODEL" --password "$MYSCHOOL_ADMIN_PASSWORD" 2>&1 | grep -E "✓|✗|!|Terminé"
 }
 # Catch-up: labs for the science courses published without them, republished with the copies that got them too.
 # Skipped while another catch-up pass runs (labs.mjs is single-instance).
@@ -59,7 +61,7 @@ while true; do
   finish_batch
   batches=$((batches + 1))
   # nothing left to do: wait for the download to bring new documents, or stop
-  if echo "$out" | grep -qE ' 0 document\(s\) à reformuler'; then
+  if echo "$out" | grep -qE ' 0 (document|chapitre)\(s\) à reformuler'; then
     polish
     if downloading; then
       echo "== Plus rien à reformuler pour l'instant, le téléchargement continue : nouvel essai dans $((WAIT / 60)) min."

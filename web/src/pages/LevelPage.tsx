@@ -2,7 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowRight, BookOpen, ClipboardList } from "lucide-react";
 import { useFetch } from "../lib/hooks";
 import type { Level, Subject } from "../lib/types";
-import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, Spinner, SubjectIcon } from "../components/ui";
+import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, Spinner, SubjectIcon, ComingSoon } from "../components/ui";
+import { isComingSoonError } from "../lib/comingSoon";
 import { useAuth } from "../lib/auth";
 import { api } from "../lib/api";
 
@@ -14,6 +15,7 @@ export default function LevelPage() {
   const { user, setUser } = useAuth();
 
   if (loading) return <Spinner />;
+  if (isComingSoonError(error)) return <ComingSoon />;
   if (error || !data) return <div className="container-x py-10"><ErrorBox message={error ?? "Erreur"} retry={reload} /></div>;
 
   const isMine = user?.levelId === data.id;

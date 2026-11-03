@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import catalogRoutes from "./routes/catalog.js";
 import meRoutes from "./routes/me.js";
 import adminRoutes from "./routes/admin.js";
+import { billingPublic, billingPrivate } from "./billing.js";
 import { ensureSearchIndex } from "./search.js";
 
 const app = express();
@@ -21,11 +22,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.disable("x-powered-by");
 app.use(cors(CORS_ORIGINS.length ? { origin: CORS_ORIGINS } : undefined));
+// The Stripe webhook checks a signature over the raw body: mounted before the JSON parser.
+app.use("/api/billing", billingPublic);
 app.use(express.json({ limit: "5mb" }));
 app.use(optionalAuth);
 
-app.get("/api/health", (_req, res) => res.json({ ok: true, name: "Myschool API", time: new Date().toISOString() }));
+app.get("/api/health", (_req, res) => res.json({ ok: true, name: "Naja7School API", time: new Date().toISOString() }));
 app.use("/api/auth", authRoutes);
+app.use("/api/billing", billingPrivate);
 app.use("/api", catalogRoutes);
 app.use("/api/me", meRoutes);
 app.use("/api/admin", adminRoutes);
@@ -52,6 +56,6 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 app.listen(PORT, HOST, () => {
-  console.log(`Myschool API prête sur http://localhost:${PORT}`);
+  console.log(`Naja7School API prête sur http://localhost:${PORT}`);
   ensureSearchIndex().catch((err) => console.error("Index de recherche :", err));
 });

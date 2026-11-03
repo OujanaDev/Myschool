@@ -8,7 +8,7 @@ const PUBLISHER = {
   address: "[adresse du siège social]",
   registry: "[ville et numéro du Registre du Commerce]",
   cndp: "[numéro du récépissé de déclaration ou de l'autorisation CNDP]",
-  email: "[adresse e-mail de contact, ex. confidentialite@votre-domaine.ma]",
+  email: "support@naja7school.com",
   host: "[nom de l'hébergeur et pays du centre de données]",
 };
 const UPDATED = "27 octobre 2026";
@@ -53,9 +53,9 @@ export default function PrivacyPage() {
 
           <h2>Préambule</h2>
           <p>
-            Myschool est une plateforme éducative (site web et applications Android et iOS) éditée par {PUBLISHER.company},{" "}
+            Naja7School est une plateforme éducative (site web et applications Android et iOS) éditée par {PUBLISHER.company},{" "}
             {PUBLISHER.legalForm}, dont le siège social est situé {PUBLISHER.address}, immatriculée au Registre du
-            Commerce de {PUBLISHER.registry} (ci-après « Myschool » ou « nous »), responsable du traitement de vos
+            Commerce de {PUBLISHER.registry} (ci-après « Naja7School » ou « nous »), responsable du traitement de vos
             données personnelles.
           </p>
           <p>Cette politique :</p>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
           <h2 id="donnees">1. Données personnelles</h2>
           <p>
             Est une donnée personnelle toute information qui permet de vous identifier, directement ou indirectement. Nous
-            ne collectons que les données utiles au fonctionnement de Myschool et nous ne les vendons jamais.
+            ne collectons que les données utiles au fonctionnement de Naja7School et nous ne les vendons jamais.
           </p>
 
           <h2 id="personnes">2. Personnes concernées</h2>
@@ -128,14 +128,14 @@ export default function PrivacyPage() {
 
           <h3>3.4. Cookies</h3>
           <p>
-            Myschool n'utilise ni cookie publicitaire, ni outil de mesure d'audience, ni traceur de réseau social. Seuls des
+            Naja7School n'utilise ni cookie publicitaire, ni outil de mesure d'audience, ni traceur de réseau social. Seuls des
             cookies techniques de sécurité peuvent être déposés par notre prestataire de réseau pour distinguer les
             visiteurs des robots malveillants. Ils sont indispensables et ne servent à aucun suivi.
           </p>
 
           <h3>3.5. Paiement</h3>
           <p>
-            Les paiements de l'abonnement Premium sont traités par un prestataire de paiement agréé. Myschool ne reçoit ni
+            Les paiements de l'abonnement Premium sont traités par un prestataire de paiement agréé. Naja7School ne reçoit ni
             ne conserve vos données de carte bancaire : nous ne recevons que la confirmation du paiement et la formule
             choisie.
           </p>
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
 
           <h2 id="mineurs">5. Élèves mineurs</h2>
           <p>
-            Myschool s'adresse aussi aux élèves du primaire, du collège et du lycée. Un élève mineur doit obtenir l'accord
+            Naja7School s'adresse aussi aux élèves du primaire, du collège et du lycée. Un élève mineur doit obtenir l'accord
             de ses parents ou de son représentant légal avant de créer un compte. Nous ne demandons aux élèves que les
             données strictement nécessaires, nous ne leur montrons aucune publicité et nous n'utilisons pas leurs données à
             des fins commerciales.
@@ -178,7 +178,7 @@ export default function PrivacyPage() {
           <h2 id="destinataires">6. Destinataires des données</h2>
           <p>Vos données ne sont accessibles qu'aux personnes qui en ont besoin :</p>
           <ul>
-            <li>l'équipe Myschool habilitée (support, administration de la plateforme) ;</li>
+            <li>l'équipe Naja7School habilitée (support, administration de la plateforme) ;</li>
             <li>notre hébergeur : {PUBLISHER.host} ;</li>
             <li>notre prestataire de réseau et de sécurité, qui protège le site et accélère son affichage ;</li>
             <li>notre prestataire de paiement, pour les abonnements Premium ;</li>
@@ -220,7 +220,7 @@ export default function PrivacyPage() {
 
           <h2 id="securite">9. Sécurité</h2>
           <p>
-            Les échanges avec Myschool sont chiffrés (HTTPS), les mots de passe sont hachés, l'accès à l'administration est
+            Les échanges avec Naja7School sont chiffrés (HTTPS), les mots de passe sont hachés, l'accès à l'administration est
             réservé aux personnes habilitées et la base de données est sauvegardée régulièrement. Vous êtes responsable de
             la confidentialité de votre mot de passe : ne le communiquez à personne.
           </p>

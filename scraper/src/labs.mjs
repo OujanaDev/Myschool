@@ -109,6 +109,7 @@ const index = loadIndex();
 let sources = index.entries.filter(
   (e) =>
     e.site === "final" && e.file && !e.reusedFrom && SUBJECTS.has(e.subject) && e.labs === undefined &&
+    e.type !== "SUMMARY" && e.type !== "EXERCISE" && // a summary stays a plain revision sheet
     !e.importedLessonId === opts.unpublished &&
     (!opts.level || e.level === opts.level) && (!opts.subject || e.subject === opts.subject)
 );

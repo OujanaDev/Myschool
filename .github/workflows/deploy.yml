@@ -1,0 +1,19 @@
+# Déploiement automatique : à chaque push sur main, le serveur tire le code et relance l'app.
+# Secrets à créer dans GitHub → Settings → Secrets and variables → Actions :
+#   VPS_HOST (IP du VPS), VPS_SSH_KEY (clé privée de l'utilisateur naja7).
+name: Deploy to VPS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency: deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: naja7
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: bash ~/app/deploy/deploy.sh

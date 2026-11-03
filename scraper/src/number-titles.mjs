@@ -58,6 +58,8 @@ function subtitleOf(longTitle, chapter) {
   const f = fold(s);
   const c = fold(chapter);
   if (c && f.startsWith(c)) s = s.slice(chapter.length).replace(/^\s*[:—–-]\s*/, "").trim();
+  // Short enough for a title: the first segment of the heading, without the résumé marker.
+  s = s.replace(/\s*:\s*l'essentiel à retenir\s*$/i, "").split(/\s+[—–]\s+|\s*:\s+/)[0].trim();
   if (!s || fold(s) === c) return "";
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -96,12 +98,12 @@ for (const level of levels) {
       if (!lessons.length) continue;
       // One number per document: the parts of a long document share theirs.
       const docs = new Map();
-      const count = { cours: 0, résumé: 0 };
+      const count = { cours: 0, résumé: 0, exercices: 0 };
       for (const l of lessons) {
         const e = byLesson.get(l.id);
         const key = e.part ? `src:${e.sourceId}` : e.id;
         if (!docs.has(key)) {
-          const kind = e.type === "SUMMARY" ? "résumé" : "cours";
+          const kind = e.type === "SUMMARY" ? "résumé" : e.type === "EXERCISE" ? "exercices" : "cours";
           docs.set(key, { kind, n: ++count[kind] });
         }
       }
@@ -109,15 +111,19 @@ for (const level of levels) {
         const e = byLesson.get(l.id);
         const doc = docs.get(e.part ? `src:${e.sourceId}` : e.id);
         const part = e.part ? Number(String(e.part).split("/")[0]) : 0;
-        const title = `${chapter.title} ${doc.kind} ${doc.n}${part ? ` – partie ${part}` : ""}`;
-        const order = (doc.kind === "cours" ? 1000 : 2000) + doc.n * 10 + part;
+        const order = { cours: 1000, résumé: 2000, exercices: 3000 }[doc.kind] + doc.n * 10 + part;
         try {
           const { meta, body } = readCourse(e);
           // The detailed title is kept once, before the first renaming.
-          if (!e.longTitle) e.longTitle = meta.title && meta.title !== title ? meta.title : e.title;
-          const subtitle = subtitleOf(e.longTitle, chapter.title);
-          const content = retitleBody(body, title, subtitle);
-          if (meta.title === title && content === body.trim() && l.title === title && l.order === order) {
+          if (!e.longTitle) e.longTitle = meta.title && !/\b(cours|résumé|exercices)\b \d*$/.test(meta.title) ? meta.title : e.title;
+          const subtitle = doc.kind === "exercices" ? "" : subtitleOf(e.longTitle, chapter.title);
+          // « Chapitre : Détail — cours 1 », « Chapitre : Détail — résumé 1 », « Chapitre — exercices corrigés ».
+          const number = doc.kind === "exercices" ? `exercices corrigés${count.exercices > 1 ? ` ${doc.n}` : ""}` : `${doc.kind} ${doc.n}${part ? ` – partie ${part}` : ""}`;
+          const title = `${chapter.title}${subtitle ? ` : ${subtitle}` : ""} — ${number}`;
+          const content = retitleBody(body, title, "");
+          // Limited free access: only the first course of a chapter, with its summary, is free.
+          const isPremium = doc.kind === "exercices" || doc.n > 1;
+          if (meta.title === title && content === body.trim() && l.title === title && l.order === order && l.isPremium === isPremium) {
             unchanged++;
             continue;
           }
@@ -128,7 +134,7 @@ for (const level of levels) {
           }
           e.title = title;
           saveCourse(e, content);
-          await api("PUT", `/admin/lessons/${l.id}`, { title, content, order });
+          await api("PUT", `/admin/lessons/${l.id}`, { title, content, order, isPremium });
           e.importedAt = new Date().toISOString();
           importState[e.id] = e.importedAt;
           renamed++;

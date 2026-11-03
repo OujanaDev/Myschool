@@ -1,24 +1,29 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
+/* Palette: cream paper, deep teal, apricot. Outfit for display, DM Sans for everything else. */
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-200: #99f6e4;
-  --color-brand-300: #5eead4;
-  --color-brand-400: #2dd4bf;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0f766e;
-  --color-brand-700: #0f5f59;
-  --color-brand-800: #134e4a;
-  --color-brand-900: #0b3a37;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
-  --color-ink: #0f172a;
-  --color-muted: #64748b;
-  --color-surface: #f8fafc;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #eef6f4;
+  --color-brand-100: #d9ece6;
+  --color-brand-200: #b7dbd3;
+  --color-brand-300: #86c3b8;
+  --color-brand-400: #4fa699;
+  --color-brand-500: #1f8f86;
+  --color-brand-600: #0b7d76;
+  --color-brand-700: #0a6761;
+  --color-brand-800: #0d524e;
+  --color-brand-900: #123c3b;
+  --color-accent-400: #f7aa73;
+  --color-accent-500: #ee8d51;
+  --color-accent-600: #d87941;
+  --color-ink: #173435;
+  --color-muted: #647576;
+  --color-surface: #fbf8f0;
+  --color-paper: #fffdf8;
+  --color-line: #eee9de;
+  --color-mint: #e8efea;
   --radius-xl2: 1.25rem;
 }
 
@@ -68,7 +73,7 @@ body {
     @apply btn bg-red-50 text-red-700 hover:bg-red-100;
   }
   .input {
-    @apply w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 placeholder:text-slate-500;
+    @apply w-full rounded-xl border border-[#dce5df] bg-white px-3.5 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 placeholder:text-muted;
   }
   .label {
     @apply block text-sm font-medium text-slate-700 mb-1.5;
@@ -107,24 +112,41 @@ body {
 .prose-lesson strong {
   @apply font-bold text-ink;
 }
+/* Blocks (see scraper/style/format-cours.md): only the definitions are boxed. Every other block keeps the text plain
+   and shows its kind through the colour of its label only, so that the page does not turn into a patchwork. */
 .prose-lesson blockquote {
-  @apply border border-brand-200 bg-brand-50 rounded-xl px-4 py-3 my-5 text-slate-700;
+  @apply my-5 border-0 bg-transparent px-0 py-0 text-slate-700;
 }
 .prose-lesson blockquote > p:first-child > strong:first-child {
   @apply text-ink;
 }
-/* Callout boxes: the label on the first line of a blockquote decides the colour (see scraper/style/format-cours.md) */
-/* À retenir: the key points of a part, strongest box of the lesson */
-.prose-lesson blockquote.callout-key {
-  @apply border-2 border-amber-400 bg-yellow-50 text-amber-950;
+/* Définition: the one highlighted box of the lesson */
+.prose-lesson blockquote.callout-definition {
+  @apply rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950;
 }
-/* Testez-vous: quick question, its Réponse is folded right below */
+.prose-lesson blockquote.callout-definition > p:first-child > strong:first-child {
+  @apply text-amber-900;
+}
+/* À retenir: the key points of a part, a thin frame and an amber label */
+.prose-lesson blockquote.callout-key {
+  @apply rounded-xl border border-amber-300 px-4 py-3 text-slate-800;
+}
+.prose-lesson blockquote.callout-key > p:first-child > strong:first-child {
+  @apply text-amber-700;
+}
+/* Testez-vous: quick question, its Réponse is folded right below; a thin frame keeps them together */
 .prose-lesson blockquote.callout-quiz {
-  @apply border-teal-300 bg-teal-50 text-teal-950;
+  @apply rounded-xl border border-teal-200 px-4 py-3 text-slate-800;
+}
+.prose-lesson blockquote.callout-quiz > p:first-child > strong:first-child {
+  @apply text-teal-700;
 }
 /* Pas à pas: numbered steps revealed one by one */
 .prose-lesson blockquote.callout-steps {
-  @apply border-indigo-200 bg-indigo-50 text-indigo-950;
+  @apply rounded-xl border border-indigo-200 px-4 py-3 text-slate-800;
+}
+.prose-lesson blockquote.callout-steps > p:first-child > strong:first-child {
+  @apply text-indigo-700;
 }
 .prose-lesson blockquote.callout-steps ol > li {
   animation: step-in 0.25s ease-out;
@@ -156,30 +178,109 @@ body {
 .prose-lesson details.solution.hint > summary {
   @apply text-amber-700 hover:bg-amber-50;
 }
-.prose-lesson blockquote.callout-definition {
-  @apply border-amber-300 bg-amber-50 text-amber-950;
-}
-.prose-lesson blockquote.callout-theorem {
-  @apply border-sky-200 bg-sky-50 text-sky-950;
-}
-.prose-lesson blockquote.callout-method {
-  @apply border-violet-200 bg-violet-50 text-violet-950;
-}
-.prose-lesson blockquote.callout-example {
-  @apply border-emerald-200 bg-emerald-50 text-emerald-950;
-}
-.prose-lesson blockquote.callout-warning {
-  @apply border-orange-200 bg-orange-50 text-orange-950;
-}
+/* Plain blocks: no background, the label alone carries the colour */
+.prose-lesson blockquote.callout-theorem,
+.prose-lesson blockquote.callout-method,
+.prose-lesson blockquote.callout-example,
+.prose-lesson blockquote.callout-warning,
 .prose-lesson blockquote.callout-proof {
-  @apply border-slate-200 bg-slate-50 text-slate-700;
+  @apply pl-4 border-l-2 border-slate-200;
 }
+.prose-lesson blockquote.callout-theorem > p:first-child > strong:first-child {
+  @apply text-brand-700;
+}
+.prose-lesson blockquote.callout-method > p:first-child > strong:first-child {
+  @apply text-violet-700;
+}
+.prose-lesson blockquote.callout-example > p:first-child > strong:first-child {
+  @apply text-sky-700;
+}
+.prose-lesson blockquote.callout-warning > p:first-child > strong:first-child {
+  @apply text-amber-600;
+}
+.prose-lesson blockquote.callout-proof > p:first-child > strong:first-child {
+  @apply text-slate-500;
+}
+/* Exercice: a thin grey frame so that the statement and its folded solution read as one */
 .prose-lesson blockquote.callout-exercise {
-  @apply border-slate-300 bg-slate-100 text-slate-800;
+  @apply rounded-xl border border-slate-200 px-4 py-3 text-slate-800;
+}
+.prose-lesson blockquote.callout-exercise > p:first-child > strong:first-child {
+  @apply text-slate-700;
 }
 .prose-lesson h2,
 .prose-lesson h3 {
   scroll-margin-top: 6rem;
+}
+/* Textbook layout (course opening with <!-- style: manuel -->, see scraper/style/regles-manuel.md): one accent colour,
+   boxes only for Définition / Théorème / Propriété, examples and remarks without any background, no highlighting. */
+.prose-manuel {
+  @apply mx-auto max-w-[750px] text-[16.5px] leading-[1.6] text-[#1f2937];
+}
+.prose-manuel h1 {
+  @apply text-[30px] font-bold leading-tight tracking-tight text-[#111827] mb-8;
+}
+.prose-manuel h2 {
+  @apply text-[22px] font-bold text-[#111827] mt-12 mb-4 pb-2 border-b border-slate-200;
+}
+.prose-manuel h3 {
+  @apply text-[18px] font-semibold text-[#111827] mt-8 mb-3;
+}
+.prose-manuel p {
+  @apply my-4;
+}
+.prose-manuel strong {
+  @apply font-semibold text-inherit;
+}
+.prose-manuel mark {
+  @apply bg-transparent text-inherit;
+}
+.prose-manuel .katex-display {
+  @apply my-5;
+}
+/* No box by default: a blockquote without a known label is plain text */
+.prose-manuel blockquote {
+  @apply rounded-none border-0 bg-transparent px-0 py-0 my-4 text-inherit;
+}
+/* Définition, Théorème, Propriété: the only boxes, left border in the accent colour and a very light background */
+.prose-manuel blockquote.callout-definition,
+.prose-manuel blockquote.callout-theorem {
+  @apply my-6 border-l-[3px] border-brand-600 bg-[#f8fafc] pl-5 pr-4 py-3 text-inherit;
+}
+.prose-manuel blockquote.callout-definition > p:first-child > strong:first-child,
+.prose-manuel blockquote.callout-theorem > p:first-child > strong:first-child {
+  @apply text-brand-700;
+}
+/* Exemple: a small-capitals grey label, the content indented */
+.prose-manuel blockquote.callout-example,
+.prose-manuel blockquote.callout-method,
+.prose-manuel blockquote.callout-proof {
+  @apply my-5 border-0 bg-transparent pl-6;
+}
+.prose-manuel blockquote.callout-example > p:first-child > strong:first-child,
+.prose-manuel blockquote.callout-method > p:first-child > strong:first-child,
+.prose-manuel blockquote.callout-proof > p:first-child > strong:first-child {
+  @apply -ml-6 mr-2 inline-block text-[12px] font-semibold uppercase tracking-[0.08em] text-slate-500;
+}
+/* Remarque: italic grey, no box */
+.prose-manuel blockquote.callout-warning {
+  @apply my-4 border-0 bg-transparent px-0 italic text-slate-500;
+}
+.prose-manuel blockquote.callout-warning > p:first-child > strong:first-child {
+  @apply not-italic font-semibold text-slate-500;
+}
+/* Testez-vous (grouped at the end of a part), À retenir and exercises: a thin grey border */
+.prose-manuel blockquote.callout-quiz,
+.prose-manuel blockquote.callout-key,
+.prose-manuel blockquote.callout-exercise,
+.prose-manuel blockquote.callout-steps {
+  @apply my-6 rounded-md border border-slate-200 bg-transparent px-5 py-4 text-inherit;
+}
+.prose-manuel details.solution {
+  @apply rounded-md border-slate-200;
+}
+.prose-manuel details.solution > summary {
+  @apply rounded-md text-brand-700;
 }
 /* Solutions are closed by default: the answer is a click away, not a wall of text */
 .prose-lesson details.solution {
@@ -417,4 +518,25 @@ body {
 }
 .fade-up {
   animation: fade-up 0.35s ease-out both;
+}
+/* Home hero: the floating QCM/score cards drift, the orbit rings turn once a minute */
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-7px); }
+}
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+.drift {
+  animation: drift 3.2s ease-in-out infinite alternate;
+}
+.orbit {
+  animation: orbit 60s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .drift,
+  .orbit {
+    animation: none;
+  }
 }

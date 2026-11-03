@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma, wrap, requireAuth, parse, publicUser } from "../lib.js";
+import { stripeEnabled } from "../billing.js";
 
 const r = Router();
 r.use(requireAuth);
@@ -278,9 +279,10 @@ r.post(
   })
 );
 
-// Billing (simulated checkout — to be replaced by CMI / Stripe / PayPal integration). Off in production, where it
-// would hand Premium out for free, unless SIMULATED_PAYMENTS=true.
-const simulatedPayments = (process.env.SIMULATED_PAYMENTS ?? (process.env.NODE_ENV === "production" ? "false" : "true")) === "true";
+// Simulated checkout, for a machine without a Stripe key (see billing.ts for the real one). Off in production,
+// where it would hand Premium out for free, and off as soon as Stripe is configured, unless SIMULATED_PAYMENTS=true.
+const simulatedPayments =
+  (process.env.SIMULATED_PAYMENTS ?? (process.env.NODE_ENV === "production" || stripeEnabled ? "false" : "true")) === "true";
 r.post(
   "/billing/upgrade",
   wrap(async (req, res) => {

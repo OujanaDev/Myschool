@@ -254,11 +254,15 @@ function Pre({ children, node: _node, ...props }: { children?: ReactNode; node?:
   return <pre {...props}>{children}</pre>;
 }
 
+/** A course opening with `<!-- style: manuel -->` uses the sober textbook layout (see scraper/style/regles-manuel.md). */
+const MANUAL = /^\s*<!--\s*style:\s*manuel\s*-->/i;
+
 export default function Markdown({ content, className = "" }: { content: string; className?: string }) {
+  const manual = MANUAL.test(content);
   return (
-    <div className={`prose-lesson ${className}`}>
+    <div className={`prose-lesson ${manual ? "prose-manuel" : ""} ${className}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath, remarkHighlight, remarkHeadingIds]}
+        remarkPlugins={[remarkGfm, remarkMath, ...(manual ? [] : [remarkHighlight]), remarkHeadingIds]}
         rehypePlugins={[[rehypeKatex, { strict: false, throwOnError: false }]]}
         components={{ blockquote: Callout, pre: Pre }}
       >

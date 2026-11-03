@@ -10,9 +10,13 @@
     "dev:api": "npm --prefix server run dev",
     "dev:web": "npm --prefix web run dev",
     "dev:mobile": "npm --prefix mobile run start",
-    "build": "npm --prefix web run build",
+    "build": "npm --prefix web ci --include=dev && npm --prefix web run build && npm --prefix server ci --include=dev && npm --prefix server run generate",
     "start": "npm --prefix server run start",
+    "db:push": "npm --prefix server run db:push",
     "db:reset": "npm --prefix server run db:reset"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

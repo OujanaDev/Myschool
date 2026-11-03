@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, HelpCircle, Lock, PlayCircle } from "lucide-react";
 import { useFetch } from "../lib/hooks";
 import type { Lesson } from "../lib/types";
-import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, Spinner, TypeBadge } from "../components/ui";
+import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, Spinner, TypeBadge, ComingSoon } from "../components/ui";
+import { isComingSoonError } from "../lib/comingSoon";
 import Markdown from "../components/Markdown";
 import LessonToc from "../components/LessonToc";
 import { api } from "../lib/api";
@@ -21,6 +22,7 @@ export default function LessonPage() {
   const [busy, setBusy] = useState(false);
 
   if (loading) return <Spinner />;
+  if (isComingSoonError(error)) return <ComingSoon />;
   if (error || !data) return <div className="container-x py-10"><ErrorBox message={error ?? "Erreur"} retry={reload} /></div>;
 
   const { level, subject } = data.chapter.levelSubject;

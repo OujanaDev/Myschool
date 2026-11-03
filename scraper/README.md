@@ -110,21 +110,31 @@ sont traitées et le cours est rédigé en français (`--lang fr`, `--lang auto`
 
 Coût indicatif (Claude Opus 5.5) : 0,05 à 0,15 $ par cours selon sa longueur ; `--dry-run` l'estime.
 
+**Mode chapitre (défaut, `--mode chapter`)** : les documents d'un chapitre (cours et résumés AlloSchool, ou les cours
+déjà écrits à partir d'eux un par un) deviennent **2 à 3 cours complets et complémentaires** (1 seul pour un petit
+chapitre), chacun suivi de **son résumé** (fiche simplifiée : définitions et formules, remarques, astuces, pièges à éviter ; jamais de labo), plus une leçon
+**« <chapitre> — exercices corrigés »** (8 à 12 exercices corrigés). Un appel de planification répartit les notions sans redite, puis un appel
+par cours et un par résumé. `--max` compte des chapitres ; `.group-state.json` garde le plan d'un chapitre interrompu.
+Les anciens cours « un document, un cours » du chapitre sont retirés (`superseded`) et leurs leçons supprimées par
+`import.mjs` quand les nouveaux arrivent. `--mode document` garde l'ancien comportement.
+
 AlloSchool publie souvent le même document dans plusieurs filières (l'anglais ou les maths de PC, SVT, STE…) : un
-document dont le texte est identique à un document déjà reformulé reçoit une copie de ce cours, rangée dans son
-niveau, sans appel au modèle (`reusedFrom` dans l'index).
+chapitre dont les documents sont identiques à un chapitre déjà fait (ou, en mode document, un document identique à
+un document déjà reformulé) reçoit une copie de ses cours, rangée dans son niveau, sans appel au modèle
+(`reusedFrom` dans l'index).
 
 `bash run-all.sh [options de reformulate]` enchaîne tout (`MYSCHOOL_ADMIN_PASSWORD` requis) : lots de reformulation,
 publication, titres numérotés (`number-titles.mjs`), labos interactifs (`labs.mjs`), QCM des nouveaux chapitres
-(`qcm.mjs`). Tant qu'un `alloschool download` tourne, il attend ses nouveaux documents au lieu de s'arrêter.
+(`qcm.mjs`, 20 questions ; `--refresh` réécrit ceux qui en ont moins ou dont le chapitre a de nouveaux cours). Tant qu'un `alloschool download` tourne, il attend ses nouveaux documents au lieu de s'arrêter.
 
 ## 1 quater. Titres numérotés et labos interactifs
 
 `node src/number-titles.mjs --password …` donne aux cours reformulés des titres courts, chapitre par chapitre :
-« <chapitre> cours n », « <chapitre> cours n – partie m » pour les parties d'un même long document,
-« <chapitre> résumé n ». Le titre détaillé devient un sous-titre en italique dans le cours. Sans appel au modèle.
+« <chapitre> : <détail> — cours n » (le détail est le premier segment du titre écrit par le modèle), « — cours n – partie m »
+pour les parties d'un même long document, « <chapitre> : <détail> — résumé n », « <chapitre> — exercices corrigés ».
+Ordre dans le chapitre : les cours, puis les résumés, puis les exercices, puis le QCM. Sans appel au modèle.
 
-`node src/labs.mjs [--level …] [--subject …] [--max n]` ajoute aux cours de physique-chimie, SVT et mathématiques
+`node src/labs.mjs [--level …] [--subject …] [--max n]` ajoute aux cours (jamais aux résumés ni aux exercices ; `strip-summary-labs.mjs` retire ceux écrits avant) de physique-chimie, SVT et mathématiques
 1 ou 2 labos (blocs ` ```lab `) sur les notions les plus importantes et les plus difficiles, choisis et réglés par
 Claude d'après [style/labos.md](style/labos.md) : courbes à curseurs (fonctions, tangente, intégrale, suites,
 lois physiques, trajectoires), échiquier de croisement génétique, onde sur une corde. Chaque labo est vérifié par
@@ -161,7 +171,7 @@ Un chapitre est retrouvé même écrit autrement (« Arithmétique dans IN » = 
 
 ```bash
 node src/clean-chapters.mjs --password 'Admin1234!'          # simulation
-node src/clean-chapters.mjs --password 'Admin1234!' --apply  # fusionne les doublons, dépublie les leçons de départ
+node src/clean-chapters.mjs --password 'Admin1234!' --apply  # fusionne les doublons, supprime les leçons de départ vides des chapitres remplis
 ```
 
 ## Droits d'auteur
@@ -170,3 +180,14 @@ Le scraper ne vérifie pas la licence des pages. N'importez que des contenus que
 réutiliser (licence libre comme CC BY-SA, autorisation de l'auteur, ou vos propres ressources) et
 conservez l'attribution ajoutée en tête de leçon. Le champ `license` de l'en-tête reprend la licence
 déclarée par la page quand elle existe.
+
+### Doublons
+
+AlloSchool publie parfois le même document deux fois dans un niveau (deux chapitres, ou énoncé et corrigé au texte
+identique). `reformulate.mjs` marque ces sources `duplicateOf` et ne reformule que la première ; une copie dans une
+autre filière reste réutilisée (`reusedFrom`). Pour nettoyer ce qui a déjà été publié en double :
+
+```bash
+node src/dedupe.mjs --dry-run --password 'Admin1234!'   # simulation
+node src/dedupe.mjs --password 'Admin1234!'             # marque les sources, retire les cours finaux, supprime les leçons
+```

@@ -2,9 +2,33 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   Atom, BookOpen, Brain, Calculator, Code, Cog, FlaskConical, Globe, Languages, Leaf, Lightbulb, Lock, Map, Moon, Puzzle,
-  Sigma, TrendingUp, FileText, ListChecks, GraduationCap, PlayCircle, ClipboardList, Crown, AlertCircle, Inbox,
+  Sigma, TrendingUp, FileText, ListChecks, GraduationCap, PlayCircle, ClipboardList, Crown, AlertCircle, Inbox, Hourglass,
 } from "lucide-react";
 import type { LessonType } from "../lib/types";
+import { COMING_SOON_LABEL } from "../lib/comingSoon";
+
+/** Tag for a cycle or level that is not open yet. */
+export function ComingSoonBadge({ className = "" }: { className?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-[5px] bg-accent-500/15 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.5px] text-accent-600 ${className}`}>
+      <Hourglass className="h-3 w-3" aria-hidden="true" /> {COMING_SOON_LABEL}
+    </span>
+  );
+}
+
+/** Full-page state when the API answers 423 for a cycle that is not open yet. */
+export function ComingSoon() {
+  return (
+    <div className="container-x py-16">
+      <div className="mx-auto max-w-[520px] rounded-[13px] bg-[#fee8d7] px-8 py-12 text-center">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-white text-accent-600"><Hourglass className="h-7 w-7" aria-hidden="true" /></span>
+        <p className="mb-2 mt-5 font-display text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink">{COMING_SOON_LABEL}</p>
+        <p className="m-0 text-sm leading-6 text-[#3f5752]">Ce niveau arrive prochainement sur Naja7School. Le lycée (tronc commun, 1ère et 2ème bac) est déjà ouvert.</p>
+        <Link to="/explorer#lycee" className="btn-primary mt-6 !rounded-[9px]">Voir les cours du lycée</Link>
+      </div>
+    </div>
+  );
+}
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   sigma: Sigma, atom: Atom, leaf: Leaf, "book-open": BookOpen, languages: Languages, globe: Globe, brain: Brain, map: Map,

@@ -5,9 +5,9 @@
  *     "Arithmétique dans N" from the curriculum and "Arithmétique dans IN" created by an import). The curriculum
  *     chapter (the first in order) is kept; the other one's lessons and QCM move into it, then the empty chapter is
  *     deleted. import.mjs uses the same key, so no new duplicate is created.
- *  2. Unpublishes the placeholder lessons of the seed ("Cours : …", "Série d'exercices : …", "Résumé du
- *     chapitre : …", generic text "en cours de rédaction") in every chapter that has real published lessons.
- *     Nothing is deleted: a lesson can be published again from the admin.
+ *  2. Deletes the placeholder lessons of the seed ("Cours : …", "Série d'exercices : …", "Résumé du
+ *     chapitre : …", generic text "en cours de rédaction") in every chapter that has real published lessons;
+ *     a chapter with placeholders only keeps them until its real lessons arrive.
  *
  *   node src/clean-chapters.mjs [--apply] [--password ...]      (without --apply: shows what would change)
  */
@@ -119,14 +119,14 @@ for (const level of levels) {
     // 2. Placeholders next to real lessons.
     for (const chapter of byKey.values()) {
       const real = chapter.lessons.filter((l) => l.isPublished && !isPlaceholder(l));
-      const placeholders = chapter.lessons.filter((l) => l.isPublished && isPlaceholder(l));
+      const placeholders = chapter.lessons.filter(isPlaceholder);
       if (!placeholders.length) continue;
       if (!real.length) {
         placeholderOnly++;
         continue;
       }
       for (const lesson of placeholders) {
-        if (opts.apply) await api("PUT", `/admin/lessons/${lesson.id}`, { isPublished: false });
+        if (opts.apply) await api("DELETE", `/admin/lessons/${lesson.id}`).catch((err) => { if (!/404/.test(err.message)) throw err; });
         hidden++;
       }
     }
@@ -134,6 +134,6 @@ for (const level of levels) {
 }
 
 log(
-  `${mode}Terminé : ${merged} chapitre(s) fusionné(s), ${moved} cours déplacé(s), ${hidden} leçon(s) de départ dépubliée(s). ` +
+  `${mode}Terminé : ${merged} chapitre(s) fusionné(s), ${moved} cours déplacé(s), ${hidden} leçon(s) de départ supprimée(s). ` +
     `${placeholderOnly} chapitre(s) n'ont encore que des leçons de départ (laissées en ligne).`
 );

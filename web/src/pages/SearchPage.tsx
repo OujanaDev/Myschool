@@ -36,7 +36,7 @@ export default function SearchPage() {
           {(cycles ?? []).map((c) => (
             <optgroup key={c.id} label={c.name}>
               {c.levels.map((l) => (
-                <option key={l.id} value={l.slug}>{l.name}</option>
+                <option key={l.id} value={l.slug} disabled={c.comingSoon}>{l.name}{c.comingSoon ? " (bientôt)" : ""}</option>
               ))}
             </optgroup>
           ))}

@@ -18,7 +18,11 @@ const { values: opts } = parseArgs({
     api: { type: "string", default: process.env.MYSCHOOL_API || "http://localhost:4000/api" },
     email: { type: "string", default: process.env.MYSCHOOL_ADMIN_EMAIL || "admin@myschool.ma" },
     password: { type: "string", default: process.env.MYSCHOOL_ADMIN_PASSWORD || "" },
-    questions: { type: "string", default: "12" },
+    questions: { type: "string", default: "20" },
+    // Also rewrites the quizzes that have fewer questions than asked, or are older than a course of their chapter.
+    refresh: { type: "boolean", default: false },
+    level: { type: "string" },
+    chapter: { type: "string" },
     max: { type: "string", default: "0" },
     model: { type: "string", default: "sonnet" },
     concurrency: { type: "string", default: "3" },
@@ -112,24 +116,37 @@ const saveFailures = () => opts["dry-run"] || fs.writeFileSync(STATE, JSON.strin
 
 const targets = [];
 let given = 0;
+const reChapter = opts.chapter ? new RegExp(opts.chapter, "i") : null;
 for (const level of levels) {
+  if (opts.level && level.slug !== opts.level) continue;
   for (const ls of level.subjects || []) {
     const detail = await api("GET", `/admin/level-subjects/${ls.id}`);
     for (const ch of detail.chapters || []) {
-      if ((ch.quizzes || []).length) continue;
+      if (reChapter && !reChapter.test(ch.title)) continue;
       const courses = (ch.lessons || []).map((l) => byLesson.get(l.id)).filter(Boolean);
+      const quiz = (ch.quizzes || [])[0];
+      let replace = null;
+      if (quiz) {
+        if (!opts.refresh) continue;
+        const newest = Math.max(0, ...(ch.lessons || []).map((l) => Date.parse(l.createdAt) || 0));
+        const stale = (quiz._count?.questions ?? N) < N || newest > Date.parse(quiz.createdAt);
+        if (!stale) continue;
+        replace = quiz;
+      }
       const f = failures[ch.id];
       if (f && f.runs >= 2 && f.courses === courses.length) {
         given++;
         continue;
       }
-      if (courses.length) targets.push({ level, subject: ls.subject, chapter: ch, courses });
+      if (courses.length) targets.push({ level, subject: ls.subject, chapter: ch, courses, replace });
     }
   }
 }
+// Chapters without any quiz first, then the ones whose quiz is to be written again.
+targets.sort((a, b) => Number(!!a.replace) - Number(!!b.replace));
 const max = Number(opts.max || 0);
 const queue = max > 0 ? targets.slice(0, max) : targets;
-log(`${targets.length} chapitre(s) sans QCM avec des cours reformulés${max ? `, ${queue.length} traité(s)` : ""}${given ? ` (${given} écarté(s) après 2 échecs)` : ""}`);
+log(`${targets.length} chapitre(s) ${opts.refresh ? "sans QCM ou au QCM à refaire" : "sans QCM"} avec des cours reformulés${max ? `, ${queue.length} traité(s)` : ""}${given ? ` (${given} écarté(s) après 2 échecs)` : ""}`);
 
 let made = 0;
 let failed = 0;
@@ -185,6 +202,10 @@ async function makeQuiz(t) {
     };
     if (opts["dry-run"]) {
       log(`~ (simulation) ${body.title} — ${body.questions.length} questions → ${t.level.shortName || t.level.name} / ${t.subject.name}`);
+    } else if (t.replace) {
+      // Same quiz, new questions: its id and the pupils' attempts stay.
+      await api("PUT", `/admin/quizzes/${t.replace.id}`, body);
+      log(`✓ ${body.title} — ${body.questions.length} questions (${t.replace.id}, remplacé) → ${t.level.shortName || t.level.name} / ${t.subject.name}`);
     } else {
       const created = await api("POST", "/admin/quizzes", body);
       log(`✓ ${body.title} — ${body.questions.length} questions (${created.id}) → ${t.level.shortName || t.level.name} / ${t.subject.name}`);

@@ -75,6 +75,6 @@ export const wrap =
     fn(req, res).catch(next);
 
 export function publicUser(u: any) {
-  const { password, ...rest } = u;
-  return rest;
+  const { password, googleId, ...rest } = u;
+  return { ...rest, hasGoogle: !!googleId };
 }

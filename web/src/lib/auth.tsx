@@ -9,6 +9,8 @@ type AuthCtx = {
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<User>;
   register: (data: { name: string; email: string; password: string; levelId?: string }) => Promise<User>;
+  /** Signs in with the ID token handed back by Google (see components/GoogleButton). */
+  loginWithGoogle: (credential: string, levelId?: string) => Promise<User>;
   logout: () => void;
   refresh: () => Promise<void>;
   setUser: (u: User) => void;
@@ -54,6 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return r.user;
   }, []);
 
+  const loginWithGoogle = useCallback(async (credential: string, levelId?: string) => {
+    const r = await api.post<{ token: string; user: User }>("/auth/google", { credential, levelId });
+    setToken(r.token);
+    setUser(r.user);
+    return r.user;
+  }, []);
+
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
@@ -62,8 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthCtx>(() => {
     const isAdmin = user?.role === "ADMIN";
     const isPremium = isAdmin || (user?.plan === "PREMIUM" && (!user.premiumUntil || new Date(user.premiumUntil) > new Date()));
-    return { user, loading, isPremium, isAdmin, login, register, logout, refresh, setUser };
-  }, [user, loading, login, register, logout, refresh]);
+    return { user, loading, isPremium, isAdmin, login, register, loginWithGoogle, logout, refresh, setUser };
+  }, [user, loading, login, register, loginWithGoogle, logout, refresh]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

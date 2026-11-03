@@ -1,0 +1,26 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# One web service: the Express API also serves web/dist (see server/src/index.ts).
+# Deploy: Render dashboard → New → Blueprint → pick this repo.
+services:
+  - type: web
+    name: myschool
+    runtime: node
+    plan: starter # a persistent disk (SQLite data) is not available on the free plan
+    buildCommand: npm run build
+    startCommand: npm run db:push && npm start
+    healthCheckPath: /api/health
+    disk:
+      name: myschool-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:/var/data/myschool.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: HOST
+        value: 0.0.0.0

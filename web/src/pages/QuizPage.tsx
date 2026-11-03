@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { CheckCircle2, ChevronLeft, ChevronRight, Clock, RotateCcw, Trophy, XCircle } from "lucide-react";
 import { useFetch } from "../lib/hooks";
 import type { AttemptResult, Quiz } from "../lib/types";
-import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, ProgressBar, Spinner } from "../components/ui";
+import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, ProgressBar, Spinner, ComingSoon } from "../components/ui";
+import { isComingSoonError } from "../lib/comingSoon";
 import Markdown from "../components/Markdown";
 import { api } from "../lib/api";
 import { useAuth } from "../lib/auth";
@@ -28,6 +29,7 @@ export default function QuizPage() {
   const answered = useMemo(() => Object.keys(answers).length, [answers]);
 
   if (loading) return <Spinner />;
+  if (isComingSoonError(error)) return <ComingSoon />;
   if (error || !data) return <div className="container-x py-10"><ErrorBox message={error ?? "Erreur"} retry={reload} /></div>;
   const { level, subject } = data.chapter.levelSubject;
 
