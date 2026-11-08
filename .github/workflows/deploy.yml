@@ -1,6 +1,6 @@
 # Déploiement automatique : à chaque push sur main, le serveur tire le code et relance l'app.
 # Secrets à créer dans GitHub → Settings → Secrets and variables → Actions :
-#   VPS_HOST (IP du VPS), VPS_SSH_KEY (clé privée de l'utilisateur naja7).
+#   VPS_HOST (IP du VPS), VPS_SSH_KEY (clé privée de l'utilisateur naja7). secret key
 name: Deploy to VPS
 on:
   push:
