@@ -23,6 +23,8 @@ const CHAPTER_STOP_WORDS = new Set(["le", "la", "les", "l", "de", "des", "du", "
 export const chapterKey = (title) =>
   fold(title)
     .replace(/^(unite|module|chapitre|partie|lecon|sequence)\s*\d+\s*[:.\-–—]\s*/, "")
+    // "Antigone (Théâtre)" and "Antigone (Jean Anouilh)" are one chapter; "(Partie 1)" / "(Partie 2)" are not.
+    .replace(/\s*\((?![^)]*\d)[^)]*\)/g, " ")
     .replace(/\$?\\mathbb\{([a-z])\}\$?/g, " $1 ")
     .replace(/ℕ/g, " n ")
     .replace(/ℤ/g, " z ")

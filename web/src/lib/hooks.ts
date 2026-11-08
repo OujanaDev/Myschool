@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "./api";
 
+export const SITE_TITLE = "Naja7School — Apprendre, réviser, réussir"; // as in index.html
+
+/** The server writes each page's title into index.html (server/src/seo.ts, same wording); this keeps the tab right while navigating inside the app. */
+export function usePageTitle(title: string | null | undefined) {
+  useEffect(() => {
+    if (title) document.title = title;
+  }, [title]);
+}
+
 export function useFetch<T>(path: string | null, deps: unknown[] = []) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, ChevronRight, Clock, Download, HelpCircle, Lock, PlayCircle } from "lucide-react";
-import { useFetch } from "../lib/hooks";
+import { useFetch, usePageTitle } from "../lib/hooks";
 import type { Lesson } from "../lib/types";
 import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, Spinner, TypeBadge, ComingSoon } from "../components/ui";
 import { isComingSoonError } from "../lib/comingSoon";
@@ -20,6 +20,7 @@ export default function LessonPage() {
   const { user } = useAuth();
   const { data, loading, error, reload, setData } = useFetch<Lesson>(`/lessons/${id}`);
   const [busy, setBusy] = useState(false);
+  usePageTitle(data && `${data.title} | ${data.chapter.levelSubject.level.shortName} | Naja7School`);
 
   if (loading) return <Spinner />;
   if (isComingSoonError(error)) return <ComingSoon />;

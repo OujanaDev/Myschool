@@ -1,0 +1,19 @@
+# Naja7School. /api/ must stay open apart from the private routes below: the pages load their content from the
+# catalogue API, and a crawler that cannot call it sees them empty.
+User-agent: *
+Disallow: /admin
+Disallow: /tableau-de-bord
+Disallow: /plan-etude
+Disallow: /profil
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /recherche
+Disallow: /embed/
+Disallow: /labo
+Disallow: /api/admin/
+Disallow: /api/auth/
+Disallow: /api/billing/
+Allow: /api/billing/plans
+Disallow: /api/me/
+
+Sitemap: https://naja7school.com/sitemap.xml

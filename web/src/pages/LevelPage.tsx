@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight, BookOpen, ClipboardList } from "lucide-react";
-import { useFetch } from "../lib/hooks";
+import { useFetch, usePageTitle } from "../lib/hooks";
 import type { Level, Subject } from "../lib/types";
 import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, Spinner, SubjectIcon, ComingSoon } from "../components/ui";
 import { isComingSoonError } from "../lib/comingSoon";
@@ -13,6 +13,7 @@ export default function LevelPage() {
   const { slug } = useParams();
   const { data, loading, error, reload } = useFetch<LevelData>(`/levels/${slug}`);
   const { user, setUser } = useAuth();
+  usePageTitle(data && `${data.name} : cours, résumés et QCM | Naja7School`);
 
   if (loading) return <Spinner />;
   if (isComingSoonError(error)) return <ComingSoon />;

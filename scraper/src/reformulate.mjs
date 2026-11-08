@@ -25,7 +25,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { ROOT, findEntry, loadIndex, parseFrontMatter, readCourse, saveCourse, saveIndex } from "./repository.mjs";
-import { foldLeakedAnswers, fold, separateFoldedLabels, idForUrl, log, slugify, stripToc, unmarkInMath, wordCount, singleInstance, killTree } from "./util.mjs";
+import { chapterKey, foldLeakedAnswers, fold, separateFoldedLabels, idForUrl, log, slugify, stripToc, unmarkInMath, wordCount, singleInstance, killTree } from "./util.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const STYLE_DIR = path.join(HERE, "..", "style");
@@ -55,6 +55,19 @@ const { values: opts } = parseArgs({
     // chapter (default): the documents of a chapter become 2-3 complementary courses, each with its summary.
     // document: one document, one course (the former behaviour).
     mode: { type: "string", default: "chapter" },
+    // Chapter mode: the chapters whose documents all have their course already (one per document) are left as they
+    // are, instead of being regrouped into 2-3 courses.
+    "no-regroup": { type: "boolean", default: false },
+    // Chapter mode: at least this many courses per chapter; with --no-regroup, a chapter already reformulated into
+    // fewer courses than this is still rewritten.
+    "min-courses": { type: "string", default: "1" },
+    // Chapter mode: the chapters of these levels (slugs, comma-separated) that have no real lesson on the site and no
+    // document in the repository are written from the model's knowledge of the official programme (2 courses with
+    // their summaries and the exercises). Needs the admin API (--api, --email, --password / MYSCHOOL_ADMIN_PASSWORD).
+    "empty-levels": { type: "string", default: "" },
+    api: { type: "string", default: process.env.MYSCHOOL_API || "http://localhost:4000/api" },
+    email: { type: "string", default: process.env.MYSCHOOL_ADMIN_EMAIL || "admin@myschool.ma" },
+    password: { type: "string", default: process.env.MYSCHOOL_ADMIN_PASSWORD || "" },
     // Extra rules appended to the system prompt (e.g. style/regles-manuel.md); they win over the format when they differ.
     rules: { type: "string" },
     help: { type: "boolean", short: "h", default: false },
@@ -691,6 +704,16 @@ async function recoverable(err, title, queue, item) {
 // followed by its own summary. The courses written one document at a time are retired once the chapter is redone.
 
 const GROUP_MAX_COURSES = 3;
+const MIN_COURSES = Math.max(1, Math.min(GROUP_MAX_COURSES, Number(opts["min-courses"]) || 1));
+// Programme descriptions and teaching sheets are not chapters: --min-courses does not apply to them.
+const ADMIN_CHAPTER = /programme p[ée]dagogique|fiches? p[ée]dagogiques?/i;
+// Published courses per chapter of the site: level|subject|chapterKey → number of COURSE finals online.
+const siteCourses = new Map();
+for (const f of index.entries) {
+  if (f.site !== "final" || !f.file || f.type !== "COURSE" || f.superseded) continue;
+  const k = `${f.level}|${f.subject}|${chapterKey(f.chapter || "general")}`;
+  siteCourses.set(k, (siteCourses.get(k) || 0) + 1);
+}
 const GROUP_WORDS_PER_COURSE = 5000; // words of material per course: 2 courses from 6 000 words, 3 from 10 000
 const MATERIAL_CAP = 28000; // words of material sent to one model call
 const GROUP_STATE = path.join(ROOT, ".group-state.json");
@@ -733,8 +756,12 @@ if (opts.mode === "chapter") {
       return true;
     });
     const finals = groupFinalsOf(key);
-    const done = finals.length && finals.every((f) => sameSet(f.groupDocs || [], docs.map((d) => d.id))) && finals.some((f) => f.type === "EXERCISE");
-    if (done && !opts.force && !onlyGroup) continue;
+    const started = finals.length > 0 && finals.every((f) => sameSet(f.groupDocs || [], docs.map((d) => d.id)));
+    const done = started && finals.some((f) => f.type === "EXERCISE");
+    // Courses of this chapter on the site today (old one-per-document courses and chapter courses, same chapter key).
+    const existingCourses = siteCourses.get(`${all[0].level}|${all[0].subject}|${chapterKey(all[0].chapter || "general")}`) || 0;
+    const enough = existingCourses >= MIN_COURSES || ADMIN_CHAPTER.test(all[0].chapter || "");
+    if (done && enough && !opts.force && !onlyGroup) continue;
     const state = groupState[key];
     if ((state?.failures || 0) >= 2 && !opts.force && !opts.only) continue;
     const material = [];
@@ -754,7 +781,7 @@ if (opts.mode === "chapter") {
     }
     if (!material.length) continue;
     const words = material.reduce((n, m) => n + wordCount(m.text), 0);
-    const count = Math.max(1, Math.min(GROUP_MAX_COURSES, Math.ceil(words / GROUP_WORDS_PER_COURSE)));
+    const count = Math.max(1, Math.min(GROUP_MAX_COURSES, Math.max(MIN_COURSES, Math.ceil(words / GROUP_WORDS_PER_COURSE))));
     const first = docs[0];
     chapterJobs.push({
       key,
@@ -769,17 +796,112 @@ if (opts.mode === "chapter") {
       words,
       count,
       fresh: material.some((m) => m.raw),
+      // Chapter courses already written for these documents but no exercises yet (a course or summary was refused):
+      // the run resumes it even with --no-regroup, the existing courses and summaries are kept.
+      partial: started && !done,
+      existingCourses,
+      enough,
       onlyN: onlyGroup ? onlyGroup.n : 0,
       signature: docs.map(sourceKey).filter(Boolean).sort().join(","),
     });
   }
+  if (opts["empty-levels"] && !onlyGroup) chapterJobs.push(...(await emptyChapterJobs()));
+  if (opts["no-regroup"] && !onlyGroup) {
+    const kept = chapterJobs.filter((c) => c.fresh || !c.enough || c.partial);
+    if (kept.length < chapterJobs.length) log(`${chapterJobs.length - kept.length} chapitre(s) déjà reformulé(s) laissé(s) tel(s) quel(s) (--no-regroup)`);
+    chapterJobs.splice(0, chapterJobs.length, ...kept);
+  }
   // Chapters with documents never reformulated first, then the ones to regroup.
   chapterJobs.sort((a, b) => Number(b.fresh) - Number(a.fresh));
+  // Twin chapters (same documents, or the same knowledge chapter of another filière) are not written twice in one
+  // run: the first is written, the others are copied from it on a later run (reuseGroup).
+  if (!onlyGroup) {
+    const seenSignature = new Set();
+    const unique = chapterJobs.filter((c) => !c.signature || !seenSignature.has(c.signature) && seenSignature.add(c.signature));
+    chapterJobs.splice(0, chapterJobs.length, ...unique);
+  }
   const total = chapterJobs.length;
   if (max > 0) chapterJobs.splice(max);
   log(`${total} chapitre(s) à reformuler (${chapterJobs.filter((c) => c.fresh).length} avec de nouveaux documents, ${total - chapterJobs.filter((c) => c.fresh).length} à regrouper)${max ? `, ${chapterJobs.length} dans ce lot` : ""}`);
   if (!chapterJobs.length) process.exit(0);
 }
+
+/** Seed placeholders of server/prisma/seed.ts (same test as clean-chapters.mjs). */
+function isPlaceholder(lesson) {
+  return /Ce cours est en cours de rédaction par l'équipe pédagogique de Myschool|\*Corrigé détaillé disponible prochainement\.\*|\*Contenu premium en cours de rédaction\.\*/.test(lesson.content || "");
+}
+
+/**
+ * Chapters of the site (levels of --empty-levels) without any real published lesson: written from the model's
+ * knowledge of the programme, as a chapter job without documents (job.knowledge). A chapter whose title matches a
+ * chapter of the repository (even one not yet reformulated) is left to the documents.
+ */
+async function emptyChapterJobs() {
+  if (!opts.password) throw new Error("--empty-levels demande le mot de passe admin (--password ou MYSCHOOL_ADMIN_PASSWORD)");
+  const base = opts.api.replace(/\/$/, "");
+  const call = async (route, token) => {
+    const res = await fetch(base + route, { headers: { "content-type": "application/json", connection: "close", ...(token ? { authorization: `Bearer ${token}` } : {}) }, method: route === "/auth/login" ? "POST" : "GET", body: route === "/auth/login" ? JSON.stringify({ email: opts.email, password: opts.password }) : undefined });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`${route} → ${res.status} ${data.error || ""}`);
+    return data;
+  };
+  const { token } = await call("/auth/login");
+  const wanted = new Set(opts["empty-levels"].split(",").map((s) => s.trim()).filter(Boolean));
+  // Languages and humanities have one programme for every filière of a year (the anglais of 2 Bac PC, SVT, Éco…):
+  // a chapter written from knowledge for one filière is copied to the others (same signature → reuseGroup) instead
+  // of being written again. Sciences differ between filières and stay per level.
+  const SHARED_PROGRAMME = new Set(["anglais", "francais", "philosophie", "arabe", "education-islamique", "histoire-geographie", "informatique"]);
+  const cycleOf = (slug) => slug.split("-")[0];
+  const repoChapters = new Set(index.entries.filter((e) => e.site === "alloschool" && e.chapter).map((e) => `${e.level}|${e.subject}|${chapterKey(e.chapter)}`));
+  const jobs = [];
+  const reChapter = opts.chapter ? new RegExp(opts.chapter, "i") : null;
+  for (const level of await call("/admin/levels", token)) {
+    if (!wanted.has(level.slug) || (opts.level && opts.level !== level.slug)) continue;
+    for (const ls of level.subjects || []) {
+      if (opts.subject && opts.subject !== ls.subject.slug) continue;
+      const detail = await call(`/admin/level-subjects/${ls.id}`, token);
+      for (const ch of detail.chapters || []) {
+        if (ADMIN_CHAPTER.test(ch.title) || (reChapter && !reChapter.test(ch.title))) continue;
+        if (repoChapters.has(`${level.slug}|${ls.subject.slug}|${chapterKey(ch.title)}`)) continue;
+        const key = `${level.slug}|${ls.subject.slug}|${ch.title}`;
+        const finals = groupFinalsOf(key);
+        if (finals.length && finals.some((f) => f.type === "EXERCISE") && !opts.force) continue; // written in an earlier run, waiting for import
+        // A chapter started from knowledge (its first courses are already online) but without exercises yet: resumed.
+        const partial = finals.length > 0;
+        if (!partial && ch.lessons.some((l) => l.isPublished && !isPlaceholder(l))) continue;
+        if ((groupState[key]?.failures || 0) >= 2 && !opts.force) continue;
+        jobs.push({
+          key,
+          id: idForUrl(`final:group:${key}`),
+          level: level.slug,
+          subject: ls.subject.slug,
+          chapter: ch.title,
+          tags: ["myschool", level.name, ls.subject.name],
+          lang: "fr",
+          docs: [],
+          material: [],
+          words: 0,
+          count: Math.max(2, MIN_COURSES),
+          fresh: true,
+          enough: false,
+          existingCourses: 0,
+          knowledge: true,
+          onlyN: 0,
+          signature: SHARED_PROGRAMME.has(ls.subject.slug) ? `knowledge:${cycleOf(level.slug)}|${ls.subject.slug}|${chapterKey(ch.title)}` : "",
+        });
+      }
+    }
+  }
+  if (jobs.length) log(`${jobs.length} chapitre(s) vide(s) sans document à rédiger de A à Z (--empty-levels)`);
+  return jobs;
+}
+
+const PLAN_KNOWLEDGE_SYSTEM = `Tu es un professeur agrégé marocain. On te donne un chapitre du programme officiel marocain (niveau, matière, titre du chapitre), sans document. Tu répartis TOUT le contenu attendu de ce chapitre dans le programme officiel en K cours complets et complémentaires, dans l'ordre pédagogique, sans qu'une notion soit traitée deux fois.
+
+Réponds uniquement par un objet JSON, sans commentaire :
+{"courses": [{"title": "<Chapitre> : <ce que traite ce cours>", "covers": ["notion 1", "notion 2", ...]}]}
+
+Règles : exactement K éléments dans "courses" ; chaque définition, propriété, méthode et type d'exercice au programme de ce chapitre figure dans "covers" d'un seul cours ; les cours sont de taille comparable ; les titres sont précis et distincts.`;
 
 const PLAN_SYSTEM = `Tu es un professeur agrégé marocain. On te donne les documents disponibles sur un chapitre (cours et résumés, souvent redondants entre eux). Tu répartis TOUT le contenu du chapitre en K cours complets et complémentaires, dans l'ordre pédagogique du programme, sans qu'une notion soit traitée deux fois.
 
@@ -825,7 +947,9 @@ async function planFor(job) {
   }
   let lastErr;
   for (let attempt = 1; attempt <= 2; attempt++) {
-    const answer = await askModel(PLAN_SYSTEM, planPrompt(job));
+    const answer = job.knowledge
+      ? await askModel(PLAN_KNOWLEDGE_SYSTEM, `Niveau : ${job.tags.slice(1).join(" / ")}\nMatière : ${job.subject}\nChapitre : ${job.chapter}\nK = ${job.count}`)
+      : await askModel(PLAN_SYSTEM, planPrompt(job));
     try {
       const plan = parsePlan(answer.text, job);
       groupState[job.key] = { ...state, plan, count: job.count, docs: job.docs.map((d) => d.id) };
@@ -879,12 +1003,13 @@ Les autres cours du chapitre traitent (ne les traite pas ici et ne répète pas 
 ${others.join("\n")}
 ` : `Ce chapitre tient en un seul cours : « ${c.title} ». Il couvre tout le contenu des documents fournis.
 `}Titre « # » du cours : « ${c.title} ».
-Type : COURSE. Il s'agit d'un cours complet : tout ce que les documents disent sur ces notions y est, reformulé, complété et sans redite.
+${job.knowledge ? `Type : COURSE. Il s'agit d'un cours complet. Aucun document n'est fourni : tu rédiges ce cours à partir de ta connaissance du programme officiel marocain de ce niveau et de cette matière (contenu, vocabulaire, notations, niveau de difficulté et types d'exercices attendus en classe et au contrôle), avec la même richesse qu'un cours écrit à partir d'un polycopié : définitions, propriétés, méthodes, exemples détaillés, exercices corrigés. Un cours de ${job.subject === "philosophie" ? "philosophie suit le programme marocain (axes, problématiques, positions des auteurs, textes de référence) " : ""}3 000 à 5 000 mots.
+Rédige en français${/^(anglais|english)/i.test(job.subject) ? " pour les explications, avec les contenus, exemples et exercices en anglais" : ""}. Dans les exemples (tableaux, fiches, courriers, formulaires), n'écris jamais de numéro de téléphone, d'adresse e-mail, d'adresse postale ni d'URL, même fictifs : remplace-les par des mentions génériques (« téléphone », « e-mail »).` : `Type : COURSE. Il s'agit d'un cours complet : tout ce que les documents disent sur ces notions y est, reformulé, complété et sans redite.
 Rédige en français, même si un document est en arabe (traduis et reformule).
 
 === NOTES BRUTES ===
 ${notes.join("\n\n")}
-=== FIN DES NOTES ===`;
+=== FIN DES NOTES ===`}`;
 }
 
 function summaryPrompt(job, title, courseText) {
@@ -955,7 +1080,8 @@ function saveGroupFinal(job, n, type, text, docNumbers) {
     license: "Contenu original Myschool",
     rights: "original",
     description: `${job.chapter} — ${heading}`,
-    sourceId: sourceIds[0] || job.docs[0].id,
+    sourceId: sourceIds[0] || job.docs[0]?.id || null,
+    ...(job.knowledge ? { knowledge: true } : {}),
     sourceIds,
     group: job.key,
     groupDocs: job.docs.map((d) => d.id),
@@ -996,9 +1122,22 @@ function finishGroup(job) {
 /** Copies the courses of a chapter already done elsewhere from the very same documents (another filière). */
 function reuseGroup(job) {
   if (!job.signature) return 0;
-  const twin = index.entries.find((f) => f.site === "final" && f.group && f.group !== job.key && f.file && f.groupSignature === job.signature && !f.reusedFrom);
+  let twin = index.entries.find((f) => f.site === "final" && f.group && f.group !== job.key && f.file && f.groupSignature === job.signature && !f.reusedFrom);
+  // Shared programme (languages, philosophy): the same chapter finished for another filière of the same year, from
+  // its documents or from knowledge, is copied rather than written again.
+  const shared = /^knowledge:([^|]+)\|/.exec(job.signature);
+  if (!twin && shared) {
+    const cycle = shared[1];
+    const key = chapterKey(job.chapter);
+    twin = index.entries.find(
+      (f) => f.site === "final" && f.group && f.group !== job.key && f.file && f.type === "EXERCISE" && !f.reusedFrom && f.subject === job.subject && (f.level || "").split("-")[0] === cycle && chapterKey(f.chapter || "") === key
+    );
+  }
   if (!twin) return 0;
   const finals = groupFinalsOf(twin.group).filter((f) => !f.reusedFrom);
+  // A twin with fewer courses than required (one-course chapter of an older run) would leave this chapter short at
+  // every pass: it is written anew instead, and the twin will be copied from it later.
+  if (finals.filter((f) => f.type === "COURSE").length < MIN_COURSES && !ADMIN_CHAPTER.test(job.chapter || "")) return 0;
   let copied = 0;
   for (const f of finals) {
     const id = idForUrl(`final:group:${job.key}#${f.type === "EXERCISE" ? "exercices" : f.n + (f.type === "SUMMARY" ? "-resume" : "")}`);
@@ -1014,7 +1153,7 @@ function reuseGroup(job) {
       chapter: job.chapter,
       tags: ["cours-myschool", job.level, job.subject],
       description: `${job.chapter} — ${f.title}`,
-      sourceId: job.docs[0].id,
+      sourceId: job.docs[0]?.id || null,
       sourceIds: job.docs.map((d) => d.id),
       group: job.key,
       groupDocs: job.docs.map((d) => d.id),
@@ -1079,7 +1218,8 @@ async function runChapter(job) {
     const summaryId = idForUrl(`final:group:${job.key}#${n}-resume`);
     const existingSummary = findEntry(index, summaryId);
     if (existingSummary?.file && sameSet(existingSummary.groupDocs || [], job.docs.map((d) => d.id)) && !opts.force) continue;
-    const result = await produce(summaryPrompt(job, c.title, courseText), courseText, { type: "SUMMARY", coverageRatio: 0.2 });
+    // A summary is a simplified sheet: 15 % of a long course is enough (a 1 371-word sheet of a 6 883-word course was refused at 20 %).
+    const result = await produce(summaryPrompt(job, c.title, courseText), courseText, { type: "SUMMARY", coverageRatio: 0.15 });
     const final = saveGroupFinal(job, n, "SUMMARY", result.text, c.docs);
     ok++;
     log(`✓ ${final.title} — ${final.words} mots, ${result.cost.toFixed(3)} $ → repository/${final.file}`);

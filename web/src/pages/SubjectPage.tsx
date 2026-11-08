@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { CheckCircle2, Clock, Eye, HelpCircle, Lock } from "lucide-react";
-import { useFetch } from "../lib/hooks";
+import { useFetch, usePageTitle } from "../lib/hooks";
 import type { Chapter, Level, Subject } from "../lib/types";
 import { Breadcrumbs, EmptyState, ErrorBox, PageHeader, PremiumBadge, Spinner, SubjectIcon, TypeBadge, ProgressBar, ComingSoon } from "../components/ui";
 import { isComingSoonError } from "../lib/comingSoon";
@@ -12,6 +12,7 @@ export default function SubjectPage() {
   const { slug, subjectSlug } = useParams();
   const { data, loading, error, reload } = useFetch<Data>(`/levels/${slug}/subjects/${subjectSlug}`);
   const { isPremium } = useAuth();
+  usePageTitle(data && `${data.subject.name} ${data.level.shortName} : cours, exercices et QCM | Naja7School`);
 
   if (loading) return <Spinner />;
   if (isComingSoonError(error)) return <ComingSoon />;

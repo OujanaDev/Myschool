@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CheckCircle2, ChevronLeft, ChevronRight, Clock, RotateCcw, Trophy, XCircle } from "lucide-react";
-import { useFetch } from "../lib/hooks";
+import { useFetch, usePageTitle } from "../lib/hooks";
 import type { AttemptResult, Quiz } from "../lib/types";
 import { Breadcrumbs, ErrorBox, Paywall, PremiumBadge, ProgressBar, Spinner, ComingSoon } from "../components/ui";
 import { isComingSoonError } from "../lib/comingSoon";
@@ -27,6 +27,7 @@ export default function QuizPage() {
   }, [result]);
 
   const answered = useMemo(() => Object.keys(answers).length, [answers]);
+  usePageTitle(data && `${data.title} | ${data.chapter.levelSubject.level.shortName} | Naja7School`);
 
   if (loading) return <Spinner />;
   if (isComingSoonError(error)) return <ComingSoon />;
@@ -93,10 +94,10 @@ export default function QuizPage() {
                         const isCorrect = o.id === r.correctOptionId;
                         const isChosen = o.id === r.chosen;
                         return (
-                          <li key={o.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isCorrect ? "bg-emerald-50 text-emerald-800" : isChosen ? "bg-red-50 text-red-800" : "bg-slate-50 text-slate-600"}`}>
-                            <Markdown content={o.text} className="!text-sm" />
-                            {isCorrect && <span className="ml-auto text-xs font-semibold">Bonne réponse</span>}
-                            {isChosen && !isCorrect && <span className="ml-auto text-xs font-semibold">Votre réponse</span>}
+                          <li key={o.id} className={`flex flex-wrap items-center gap-x-2 gap-y-0.5 rounded-lg px-3 py-2 text-sm ${isCorrect ? "bg-emerald-50 text-emerald-800" : isChosen ? "bg-red-50 text-red-800" : "bg-slate-50 text-slate-600"}`}>
+                            <Markdown content={o.text} className="min-w-0 !text-sm !text-inherit [&_p]:!my-0" />
+                            {isCorrect && <span className="ml-auto shrink-0 text-xs font-semibold">Bonne réponse</span>}
+                            {isChosen && !isCorrect && <span className="ml-auto shrink-0 text-xs font-semibold">Votre réponse</span>}
                           </li>
                         );
                       })}
@@ -126,11 +127,11 @@ export default function QuizPage() {
     );
 
   return (
-    <div className="container-x max-w-3xl py-10">
+    <div className="container-x max-w-3xl py-6 sm:py-10">
       <Breadcrumbs items={[{ label: level.name, to: `/niveau/${level.slug}` }, { label: subject.name, to: `/niveau/${level.slug}/${subject.slug}` }, { label: data.chapter.title }]} />
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-ink">{data.title}</h1>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
+        <div className="min-w-0">
+          <h1 className="text-xl font-extrabold text-ink sm:text-2xl">{data.title}</h1>
           {data.description && <p className="text-sm text-muted">{data.description}</p>}
         </div>
         <div className="flex items-center gap-3 text-sm">
@@ -144,9 +145,9 @@ export default function QuizPage() {
       </div>
       <ProgressBar value={((current + 1) / data.questions.length) * 100} className="mb-6" />
 
-      <div className="card p-6 sm:p-8 fade-up" key={q.id}>
-        <Markdown content={q.text} className="!text-lg font-semibold" />
-        <div className="mt-5 space-y-2.5">
+      <div className="card p-4 sm:p-8 fade-up" key={q.id}>
+        <Markdown content={q.text} className="!text-[17px] font-semibold sm:!text-lg [&_p:first-child]:!mt-0 [&_p:last-child]:!mb-0" />
+        <div className="mt-4 space-y-2.5 sm:mt-5">
           {q.options.map((o, i) => {
             const selected = answers[q.id] === o.id;
             return (
@@ -154,31 +155,38 @@ export default function QuizPage() {
                 key={o.id}
                 aria-pressed={selected}
                 onClick={() => setAnswers({ ...answers, [q.id]: o.id })}
-                className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${selected ? "border-brand-500 bg-brand-50 ring-2 ring-brand-500/20" : "border-slate-200 hover:border-brand-300 hover:bg-slate-50"}`}
+                className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all sm:px-4 ${selected ? "border-brand-500 bg-brand-50 ring-2 ring-brand-500/20" : "border-slate-200 hover:border-brand-300 hover:bg-slate-50"}`}
               >
                 <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${selected ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-600"}`}>{String.fromCharCode(65 + i)}</span>
-                <Markdown content={o.text} className="!text-[15px]" />
+                <Markdown content={o.text} className="min-w-0 flex-1 !text-[15px] !leading-6 [&_p]:!my-0" />
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
-        <button className="btn-ghost" disabled={current === 0} onClick={() => setCurrent(current - 1)}><ChevronLeft className="h-4 w-4" /> Précédent</button>
-        <div className="flex gap-1.5">
-          {data.questions.map((qq, i) => (
-            <button key={qq.id} onClick={() => setCurrent(i)} className="grid h-7 w-5 place-items-center rounded-full" aria-label={`Question ${i + 1}${answers[qq.id] ? " (répondue)" : ""}`} aria-current={i === current ? "step" : undefined}>
-              <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${i === current ? "bg-brand-600" : answers[qq.id] ? "bg-brand-300" : "bg-slate-200"}`} />
-            </button>
-          ))}
-        </div>
+      {/* Previous / next stay right under the answers; the question picker wraps on its own row so 20 questions fit a phone. */}
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <button className="btn-outline flex-1 justify-center sm:flex-none" disabled={current === 0} onClick={() => setCurrent(current - 1)}><ChevronLeft className="h-4 w-4" /> Précédent</button>
         {current < data.questions.length - 1 ? (
-          <button className="btn-primary" onClick={() => setCurrent(current + 1)}>Suivant <ChevronRight className="h-4 w-4" /></button>
+          <button className="btn-primary flex-1 justify-center sm:flex-none" onClick={() => setCurrent(current + 1)}>Suivant <ChevronRight className="h-4 w-4" /></button>
         ) : (
-          <button className="btn-accent" disabled={busy || answered === 0} onClick={submit}>{busy ? "Envoi…" : "Valider mes réponses"}</button>
+          <button className="btn-accent flex-1 justify-center sm:flex-none" disabled={busy || answered === 0} onClick={submit}>{busy ? "Envoi…" : "Valider"}<span className="hidden sm:inline"> mes réponses</span></button>
         )}
       </div>
+      <nav aria-label="Aller à une question" className="mt-5 flex flex-wrap justify-center gap-1.5">
+        {data.questions.map((qq, i) => (
+          <button
+            key={qq.id}
+            onClick={() => setCurrent(i)}
+            aria-label={`Question ${i + 1}${answers[qq.id] ? " (répondue)" : ""}`}
+            aria-current={i === current ? "step" : undefined}
+            className={`grid h-9 w-9 place-items-center rounded-lg text-xs font-semibold transition-colors sm:h-7 sm:w-7 ${i === current ? "bg-brand-600 text-white" : answers[qq.id] ? "bg-brand-100 text-brand-800" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </nav>
       {!user && <p className="mt-4 text-center text-sm text-muted">Connectez-vous pour enregistrer votre score et suivre votre progression.</p>}
     </div>
   );

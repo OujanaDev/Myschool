@@ -105,7 +105,8 @@ const login = await api("POST", "/auth/login", { email: opts.email, password: op
 token = login.token;
 const levels = await api("GET", "/admin/levels");
 const index = loadIndex();
-const finals = index.entries.filter((e) => e.sourceId && e.importedLessonId && e.file);
+// Every reformulated course online, including the chapters written from the model's knowledge (no sourceId).
+const finals = index.entries.filter((e) => e.site === "final" && e.importedLessonId && e.file);
 const byLesson = new Map(finals.map((e) => [e.importedLessonId, e]));
 
 // Chapters whose QCM was refused on two runs in a row: skipped until they get new courses, so that a loop calling
@@ -113,6 +114,10 @@ const byLesson = new Map(finals.map((e) => [e.importedLessonId, e]));
 const STATE = path.join(ROOT, ".qcm-state.json");
 const failures = fs.existsSync(STATE) ? JSON.parse(fs.readFileSync(STATE, "utf8")) : {};
 const saveFailures = () => opts["dry-run"] || fs.writeFileSync(STATE, JSON.stringify(failures));
+// A rewritten quiz keeps its id and creation date (PUT): the date of the rewrite is kept here, or the quiz would
+// look older than the courses of its chapter forever and be written again at every pass.
+const REFRESHED = path.join(ROOT, ".qcm-refreshed.json");
+const refreshed = fs.existsSync(REFRESHED) ? JSON.parse(fs.readFileSync(REFRESHED, "utf8")) : {};
 
 const targets = [];
 let given = 0;
@@ -129,7 +134,7 @@ for (const level of levels) {
       if (quiz) {
         if (!opts.refresh) continue;
         const newest = Math.max(0, ...(ch.lessons || []).map((l) => Date.parse(l.createdAt) || 0));
-        const stale = (quiz._count?.questions ?? N) < N || newest > Date.parse(quiz.createdAt);
+        const stale = (quiz._count?.questions ?? N) < N || newest > Math.max(Date.parse(quiz.createdAt), Date.parse(refreshed[quiz.id] ?? "") || 0);
         if (!stale) continue;
         replace = quiz;
       }
@@ -205,6 +210,8 @@ async function makeQuiz(t) {
     } else if (t.replace) {
       // Same quiz, new questions: its id and the pupils' attempts stay.
       await api("PUT", `/admin/quizzes/${t.replace.id}`, body);
+      refreshed[t.replace.id] = new Date().toISOString();
+      fs.writeFileSync(REFRESHED, JSON.stringify(refreshed));
       log(`✓ ${body.title} — ${body.questions.length} questions (${t.replace.id}, remplacé) → ${t.level.shortName || t.level.name} / ${t.subject.name}`);
     } else {
       const created = await api("POST", "/admin/quizzes", body);

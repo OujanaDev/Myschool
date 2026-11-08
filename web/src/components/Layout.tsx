@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { SITE_TITLE } from "../lib/hooks";
 import { Search, Menu, X, Crown, LayoutDashboard, LogOut, Shield, User as UserIcon, ArrowRight } from "lucide-react";
 import { useAuth } from "../lib/auth";
 
@@ -59,6 +60,15 @@ export default function Layout() {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
 
+  // Leaving a page drops its title; the next page sets its own once loaded. Not on arrival: the server already wrote it.
+  const { pathname } = useLocation();
+  const titledPath = useRef(pathname);
+  useLayoutEffect(() => {
+    if (titledPath.current === pathname) return;
+    titledPath.current = pathname;
+    document.title = SITE_TITLE;
+  }, [pathname]);
+
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (q.trim()) {
@@ -95,13 +105,13 @@ export default function Layout() {
           <nav className="hidden items-center gap-3 lg:flex" aria-label="Navigation principale">
             {links}
           </nav>
-          <form onSubmit={submitSearch} className="ml-auto hidden md:block" role="search">
-            <label className="flex h-10 w-56 items-center gap-2 rounded-[9px] border border-[#dce5df] bg-white px-3 text-brand-600 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20">
+          <form onSubmit={submitSearch} className="ml-auto hidden min-w-0 max-w-56 flex-1 md:block" role="search">
+            <label className="flex h-10 w-full items-center gap-2 rounded-[9px] border border-[#dce5df] bg-white px-3 text-brand-600 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20">
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher…" aria-label="Rechercher un cours, un QCM, un niveau" type="search" className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-muted" />
             </label>
           </form>
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden shrink-0 items-center gap-3 md:flex">
             {user ? (
               <>
                 {!isPremium && (
@@ -164,11 +174,11 @@ export default function Layout() {
             )}
           </div>
           {!user && (
-            <Link to="/inscription" className="btn-primary ml-auto !rounded-[9px] !px-3 !py-2.5 md:hidden">
+            <Link to="/inscription" className="btn-primary ml-auto !rounded-[9px] !px-3 !py-2.5 max-[359px]:hidden md:hidden">
               Commencer
             </Link>
           )}
-          <button className="ml-auto rounded-lg p-2 hover:bg-brand-50 md:ml-0 lg:hidden [&:not(:first-child)]:ml-0" onClick={() => setOpen(!open)} aria-label={open ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={open} aria-controls="mobile-menu">
+          <button className="ml-auto rounded-lg p-2 hover:bg-brand-50 md:ml-0 lg:hidden [&:not(:first-child)]:ml-0 max-[359px]:!ml-auto" onClick={() => setOpen(!open)} aria-label={open ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={open} aria-controls="mobile-menu">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>

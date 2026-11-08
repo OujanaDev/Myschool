@@ -11,6 +11,8 @@ import meRoutes from "./routes/me.js";
 import adminRoutes from "./routes/admin.js";
 import { billingPublic, billingPrivate } from "./billing.js";
 import { ensureSearchIndex } from "./search.js";
+import { sitemapHandler } from "./sitemap.js";
+import { redirectWww, servePage } from "./seo.js";
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -21,6 +23,7 @@ const CORS_ORIGINS = (process.env.CORS_ORIGINS || "").split(",").map((o) => o.tr
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.disable("x-powered-by");
+app.use(redirectWww);
 app.use(cors(CORS_ORIGINS.length ? { origin: CORS_ORIGINS } : undefined));
 // The Stripe webhook checks a signature over the raw body: mounted before the JSON parser.
 app.use("/api/billing", billingPublic);
@@ -33,6 +36,7 @@ app.use("/api/billing", billingPrivate);
 app.use("/api", catalogRoutes);
 app.use("/api/me", meRoutes);
 app.use("/api/admin", adminRoutes);
+app.get("/sitemap.xml", sitemapHandler);
 
 // Serve the built web app in production (web/dist). Built assets have a hash in their name: cached for good, and a
 // missing one is a 404 (not index.html, which a CDN would then cache under a .js URL). index.html is revalidated on
@@ -41,10 +45,7 @@ const webDist = path.resolve(__dirname, "../../web/dist");
 if (fs.existsSync(webDist)) {
   app.use("/assets", express.static(path.join(webDist, "assets"), { immutable: true, maxAge: "1y", fallthrough: false }));
   app.use(express.static(webDist, { index: false, setHeaders: (res) => res.setHeader("Cache-Control", "no-cache") }));
-  app.get(/^(?!\/api).*/, (_req, res) => {
-    res.setHeader("Cache-Control", "no-cache");
-    res.sendFile(path.join(webDist, "index.html"));
-  });
+  app.get(/^(?!\/api).*/, servePage(path.join(webDist, "index.html")));
 }
 
 app.use((req, res) => res.status(404).json({ error: `Route introuvable: ${req.method} ${req.path}` }));
