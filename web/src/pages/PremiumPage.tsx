@@ -131,7 +131,10 @@ export default function PremiumPage() {
       </div>
 
       <p className="mx-auto mt-8 flex max-w-xl items-center justify-center gap-2 text-center text-xs text-muted">
-        <ShieldCheck className="h-4 w-4 shrink-0" /> Paiement sécurisé par carte bancaire via Stripe. Aucun renouvellement automatique : vous rechoisissez une offre à la fin de la période.
+        <ShieldCheck className="h-4 w-4 shrink-0" /> Paiement sécurisé par carte bancaire via Stripe.
+      </p>
+      <p className="mx-auto mt-3 max-w-xl text-center text-xs text-muted">
+        Cartes acceptées : Visa ou Mastercard. Pour une carte bancaire marocaine, activez d'abord les paiements en ligne à l'international auprès de votre banque (Dotation en devises).
       </p>
     </div>
   );
