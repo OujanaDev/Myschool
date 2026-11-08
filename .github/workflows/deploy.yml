@@ -1,19 +1,34 @@
-# Déploiement automatique : à chaque push sur main, le serveur tire le code et relance l'app.
-# Secrets à créer dans GitHub → Settings → Secrets and variables → Actions :
-#   VPS_HOST (IP du VPS), VPS_SSH_KEY (clé privée de l'utilisateur naja7). secret key
+# Déploiement automatique sur le VPS.
+# À chaque push sur la branche main, GitHub se connecte au VPS en SSH (utilisateur naja7)
+# et lance deploy/deploy.sh : récupération du code, build, mise à jour de la base, redémarrage.
+#
+# Secrets requis (GitHub → Settings → Secrets and variables → Actions) :
+#   VPS_HOST     : adresse IP publique du VPS
+#   VPS_SSH_KEY  : clé SSH privée de l'utilisateur naja7 (la clé publique doit être dans
+#                  /home/naja7/.ssh/authorized_keys sur le VPS)
+#
+# Relancer sans push : onglet Actions → Deploy to VPS → Run workflow.
+
 name: Deploy to VPS
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
+# Un seul déploiement à la fois : un nouveau push attend la fin du précédent.
 concurrency: deploy
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: appleboy/ssh-action@v1.2.0
+      - name: Mise à jour du VPS
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: naja7
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 20m
           script: bash ~/app/deploy/deploy.sh
